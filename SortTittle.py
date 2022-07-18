@@ -93,10 +93,6 @@ def loopThroughAllMovies(videos):
     print("正在进行索引请稍候...")
     video_len=len(videos.all())
     for video,i in zip(videos.all(),range(video_len)):
-        print(video.guid)
-        print(video.media[0].id )
-        
-
         j=int(i/video_len*100)
         if i==video_len-1:
             j=100
