@@ -142,7 +142,6 @@ if __name__ == '__main__':
     for section in plex.library.sections():
         # if section.type == 'show' or section.type =='movie':
         print(section.title,section.key)
-        collections=section.collections()
         # print(section.collections.title)
 
         libtable.append(section.title)
