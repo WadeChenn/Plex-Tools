@@ -1,11 +1,23 @@
-#有问题请联系 yerwer@foxmail.com
+# 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
+# 或联系 yerwer@foxmail.com
+
+#########################参数初始化(使用配置文件请修改此处)############################
+USE_INIT=True                               #使用当前配置请设为True,否则将尝试从外部获取参数
+PLEX_TOKEN="zZzHtEx-zFGJssiw2zcy"           #Plextoken获取,具体方法请自行查找 "zZzxxxxxxxJssiw2zcy" *必须设置
+PLEX_URL="http://plex.0bm.cn:32400"         #Plexurl "http://plex.xxx.cn:32400" *必须设置
+RECOVER=False                               #是否覆盖已有的拼音排序
+LIB_NAME=''                                 #要排序的库名(存在时库编号不生效)
+LIB_NUMBER=0                                #要排序的库编号(不使用库编号则设为0)
+ENABLE_LOG=1                                #是否输出进度条
+##############################################################
+
 import os
 from importlib import import_module
 from pickle import FALSE, TRUE
 import sys
 
-# 依赖库列表
 #########################依赖库初始化###########################
+# 依赖库列表
 import_list=[
     'pypinyin',
     'plexapi',
@@ -32,20 +44,10 @@ from plexapi.server import PlexServer
 import re
 import argparse
 
-#########################参数初始化(使用配置文件请修改此处)############################
-USE_INIT=True                               #使用当前配置请设为True,否则将尝试从外部获取参数
-PLEX_TOKEN="zZzHtEx-zFGJssiw2zcy"           #Plextoken获取,具体方法请自行查找 "zZzxxxxxxxJssiw2zcy"
-PLEX_URL="http://plex.0bm.cn:32400"         #Plexurl "http://plex.xxx.cn:32400"
-RECOVER=False                               #是否覆盖已有的拼音排序
-LIB_NAME=''                                 #要排序的库名(存在时库编号不生效)
-LIB_NUMBER=0                                #要排序的库编号(不使用库编号则设为0)
-ENABLE_LOG=1                                #是否输出进度条
 
-##############################################################
 
 
 def uniqify(seq):
-    # Not order preserving
     keys = {}
     for e in seq:
         keys[e] = 1
@@ -60,8 +62,8 @@ def check_contain_chinese(check_str):  # Judge chinese
 
 
 def chinese2pinyin(chinesestr): #chinese to pyinyin
-    pinyin = pypinyin.pinyin(chinesestr, style=pypinyin.FIRST_LETTER)
     pyinyin_list = []
+    pinyin = pypinyin.pinyin(chinesestr, style=pypinyin.FIRST_LETTER)
     for i in range(len(pinyin)):
         pyinyin_list.append(str(pinyin[i][0]).upper())
     pyinyin_str = ''.join(pyinyin_list)
@@ -107,16 +109,18 @@ if __name__ == '__main__':
     parse_xls.add_argument('-url', nargs='?', default=None)
     parse_xls.add_argument('-token', nargs='?', default=None)
     parse_xls.add_argument('-c', nargs='?', default=0)
+    parse_xls.add_argument('-n', nargs='?', default=0)
     parse_xls.add_argument('-l', nargs='?', default='')
     parse_xls.add_argument('-log', nargs='?', default=1)
 
     #get param
     if USE_INIT==False:
         parse_argument = parse_xls.parse_args()
-        PLEX_URL=parse_argument.url
-        PLEX_TOKEN=parse_argument.token
+        # PLEX_URL=parse_argument.url
+        # PLEX_TOKEN=parse_argument.token
         RECOVER=parse_argument.c
         LIB_NAME=parse_argument.l
+        LIB_NUMBER=parse_argument.n
         ENABLE_LOG=parse_argument.log
 
     if ENABLE_LOG:
