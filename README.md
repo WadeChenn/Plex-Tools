@@ -12,4 +12,7 @@ Plex-SortTittle
 
 运行命令 python SortTittle.py 
 
+群晖默认无python3 及pip环境 可参考以下链接配置
+https://blog.csdn.net/xiaokai1999/article/details/121070867
+
 ### TODO 添加集合排序规则修改
