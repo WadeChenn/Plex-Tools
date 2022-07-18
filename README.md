@@ -10,4 +10,6 @@ Plex-SortTittle
 2. 脚本内部配置参数(将USE_INIT设为True)
 3. 直接运行(会提示输入选择要排序的库)
 
+运行命令 python SortTittle.py 
+
 ### TODO 添加集合排序规则修改
