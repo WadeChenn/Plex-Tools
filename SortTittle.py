@@ -76,10 +76,27 @@ def removePunctuation(query):
         query = rule.sub('', query)
     return query
 
+def singleVideo(video):
+    title = video.title
+    if video.titleSort:  # 判断是否已经有标题
+        con = video.titleSort
+        if (check_contain_chinese(con) or RECOVER):
+            SortTitle = chinese2pinyin(title)
+            SortTitle=removePunctuation(SortTitle)
+            try:
+                video.editSortTitle(SortTitle)
+            except:
+                print("Edit SortTitle error")
+        #     continue
+        # continue
 def loopThroughAllMovies(videos):
     print("正在进行索引请稍候...")
     video_len=len(videos.all())
     for video,i in zip(videos.all(),range(video_len)):
+        print(video.guid)
+        print(video.media[0].id )
+        
+
         j=int(i/video_len*100)
         if i==video_len-1:
             j=100
@@ -112,6 +129,7 @@ if __name__ == '__main__':
     parse_xls.add_argument('-n', nargs='?', default=0)
     parse_xls.add_argument('-l', nargs='?', default='')
     parse_xls.add_argument('-log', nargs='?', default=1)
+    parse_xls.add_argument('-showid', nargs='?', default=0)
 
     #get param
     if USE_INIT==False:
@@ -122,7 +140,7 @@ if __name__ == '__main__':
         LIB_NAME=parse_argument.l
         LIB_NUMBER=parse_argument.n
         ENABLE_LOG=parse_argument.log
-
+        SHOWID=parse_argument.showid
     if ENABLE_LOG:
         print("--------------------------------------")
         print("正在连接PLEX服务器...")
@@ -139,6 +157,10 @@ if __name__ == '__main__':
         print("Start Serching!")
         print("--------------------------------------")
     libtable=[]
+    # ddd=plex.library.search(guid='plex://movie/5d7768d2ebdf2200209c912f')
+    # print(ddd)
+    # ddd=plex.library.search(id=8904)
+    # print(ddd)
     for section in plex.library.sections():
         # if section.type == 'show' or section.type =='movie':
         print(section.title,section.key)
@@ -149,43 +171,49 @@ if __name__ == '__main__':
         # print(collection.title,collection.key)
         # libtable.append(section.title)
     print("--------------------------------------")
-    if len(LIB_NAME)>0:
-        if LIB_NAME =="all":
-            print("All libs Start!")
-            # loopThroughAllMovies(plex.library)
-            # print("\n排序成功!")
-            for i in range(len(libtable)):
-                print("\nStart NO."+str(i)+" "+libtable[i])
-                videos = plex.library.section(libtable[i])
-                loopThroughAllMovies(videos)
-            print("\n排序成功!")
-        else:
-            print("指定库为:"+LIB_NAME+" Start!")
-            try:
-                videos = plex.library.section(LIB_NAME)
-                loopThroughAllMovies(videos)
-                print("\n排序成功!")
-            except:
-                print("库名错误!")
-
+    # SHOWID=8905
+    if SHOWID:
+        video=plex.library.search(id=SHOWID)
+        # plex.library.
+        singleVideo(video[0])
     else:
-        if LIB_NUMBER != 0:
-            try:
-                videos = plex.library.sectionByID(int(LIB_NUMBER))
-                loopThroughAllMovies(videos)
+        if len(LIB_NAME)>0:
+            if LIB_NAME =="all":
+                print("All libs Start!")
+                # loopThroughAllMovies(plex.library)
+                # print("\n排序成功!")
+                for i in range(len(libtable)):
+                    print("\nStart NO."+str(i)+" "+libtable[i])
+                    videos = plex.library.section(libtable[i])
+                    loopThroughAllMovies(videos)
                 print("\n排序成功!")
-            except:
-                print("出错!")
-                os._exit()
+            else:
+                print("指定库为:"+LIB_NAME+" Start!")
+                try:
+                    videos = plex.library.section(LIB_NAME)
+                    loopThroughAllMovies(videos)
+                    print("\n排序成功!")
+                except:
+                    print("库名错误!")
+
         else:
-            print("未设定库名")
-            LIB_NUMBER = input('请输入你要排序的库编号：')
-            LIB_NUMBER=int(LIB_NUMBER)
-            try:
-                videos = plex.library.sectionByID(LIB_NUMBER)
-                loopThroughAllMovies(videos)
-                print("\n排序成功!")
-            except:
-                print("出错!")
-                os._exit()
+            if LIB_NUMBER != 0:
+                try:
+                    videos = plex.library.sectionByID(int(LIB_NUMBER))
+                    loopThroughAllMovies(videos)
+                    print("\n排序成功!")
+                except:
+                    print("出错!")
+                    os._exit()
+            else:
+                print("未设定库名")
+                LIB_NUMBER = input('请输入你要排序的库编号：')
+                LIB_NUMBER=int(LIB_NUMBER)
+                try:
+                    videos = plex.library.sectionByID(LIB_NUMBER)
+                    loopThroughAllMovies(videos)
+                    print("\n排序成功!")
+                except:
+                    print("出错!")
+                    os._exit()
 
