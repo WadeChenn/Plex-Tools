@@ -1,6 +1,6 @@
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
 # 或联系 yerwer@foxmail.com
-# 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0)
+# 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0) -log(1 or 0 是否打开进度条log)
 #########################参数初始化(使用配置文件请修改此处)############################
 USE_INIT=False                               #使用当前配置请设为True,否则将尝试从外部获取参数
 PLEX_TOKEN="zZzxxxxxxxJssiw2zcy"           #Plextoken获取,具体方法请自行查找 "zZzxxxxxxxJssiw2zcy" *必须设置
