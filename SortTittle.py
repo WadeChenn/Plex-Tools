@@ -120,6 +120,7 @@ def loopThroughAllMovies(videos):
 
 
 
+
 if __name__ == '__main__':
 
     parse_xls = argparse.ArgumentParser(description="parse arguement of SortTittle")
@@ -129,7 +130,7 @@ if __name__ == '__main__':
     parse_xls.add_argument('-n', nargs='?', default=0)
     parse_xls.add_argument('-l', nargs='?', default='')
     parse_xls.add_argument('-log', nargs='?', default=1)
-    parse_xls.add_argument('-showid', nargs='?', default=0)
+    parse_xls.add_argument('-mid', nargs='?', default=0)
 
     #get param
     if USE_INIT==False:
@@ -140,7 +141,7 @@ if __name__ == '__main__':
         LIB_NAME=parse_argument.l
         LIB_NUMBER=parse_argument.n
         ENABLE_LOG=parse_argument.log
-        SHOWID=parse_argument.showid
+        MEDIA_ID=parse_argument.mid
     if ENABLE_LOG:
         print("--------------------------------------")
         print("正在连接PLEX服务器...")
@@ -172,8 +173,8 @@ if __name__ == '__main__':
         # libtable.append(section.title)
     print("--------------------------------------")
     # SHOWID=8905
-    if SHOWID:
-        video=plex.library.search(id=SHOWID)
+    if MEDIA_ID:
+        video=plex.library.search(id=MEDIA_ID)
         # plex.library.
         singleVideo(video[0])
     else:
@@ -216,4 +217,6 @@ if __name__ == '__main__':
                 except:
                     print("出错!")
                     os._exit()
+
+
 
