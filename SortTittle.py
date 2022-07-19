@@ -16,6 +16,7 @@ import os
 from importlib import import_module
 from pickle import FALSE, TRUE
 import sys
+import urllib
 
 #########################依赖库初始化###########################
 # 依赖库列表
@@ -79,6 +80,7 @@ def removePunctuation(query):
 
 def singleVideo(video):
     title = video.title
+    video._edit_tags(tag="actor", items=[x.tag for x in video.actors], remove=True)
     if video.titleSort:  # 判断是否已经有标题
         con = video.titleSort
         if (check_contain_chinese(con) or RECOVER):
@@ -90,10 +92,57 @@ def singleVideo(video):
                 print("Edit SortTitle error")
         #     continue
         # continue
+tags = {
+        "Action":"动作",
+        "Adventure":"冒险",
+        "Animation" :"动画",
+        "Anime" : "动画",
+        "Mini-Series" : "短剧",
+        "War & Politics" : "政治",
+        "Sci-Fi & Fantasy" : "科幻",
+        "Suspense" : "悬疑",
+        "Reality" : "记录",
+        "Comedy":"喜剧",
+        "Crime":"犯罪",
+        "Documentary":"纪录",
+        "Drama":"剧情",
+        "Family":"家庭",
+        "Fantasy":"奇幻",
+        "History":"历史",
+        "Horror":"恐怖",
+        "Music":"音乐",
+        "Mystery":"悬疑",
+        "Romance":"爱情",
+        "Science Fiction":"科幻",
+        "Sport":"体育",
+        "Thriller":"惊悚",
+        "War":"战争",
+        "Western":"西部",
+        "Biography":"传记",
+        "Film-noir":"黑色",
+        "Musical":"音乐",
+        "Sci-Fi":"科幻",
+        "Tv Movie":"电视",
+        "Disaster":"灾难",
+        }
+def updategenre(video,genres):
+    englist=[]
+    chlist=[]
+    for tag in genres:
+        enggenre = tag.tag
+        if enggenre in tags.keys():
+            englist.append(enggenre)
+            zhQuery = tags[enggenre]
+            chlist.append(zhQuery)
+    if len(englist) >0: 
+        video.addGenre(chlist, locked=False)
+        video.removeGenre(englist, locked=False)
+
 def loopThroughAllMovies(videos):
     print("正在进行索引请稍候...")
     video_len=len(videos.all())
     for video,i in zip(videos.all(),range(video_len)):
+        video.reload()
         j=int(i/video_len*100)
         if i==video_len-1:
             j=100
@@ -113,10 +162,9 @@ def loopThroughAllMovies(videos):
                     print("Edit SortTitle error")
             #     continue
             # continue
-
-
-
-
+        if video.genres:
+            genres=video.genres
+            updategenre(video,genres)
 
 if __name__ == '__main__':
 
@@ -169,7 +217,7 @@ if __name__ == '__main__':
         # print(collection.title,collection.key)
         # libtable.append(section.title)
     print("--------------------------------------")
-    # SHOWID=8905
+    # MEDIA_ID=8905
     if MEDIA_ID:
         video=plex.library.search(id=MEDIA_ID)
         # plex.library.
@@ -214,6 +262,7 @@ if __name__ == '__main__':
                 except:
                     print("出错!")
                     os._exit()
+
 
 
 
