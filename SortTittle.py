@@ -77,21 +77,6 @@ def removePunctuation(query):
         rule = re.compile(u"[^a-zA-Z0-9]")
         query = rule.sub('', query)
     return query
-
-def singleVideo(video):
-    title = video.title
-    video._edit_tags(tag="actor", items=[x.tag for x in video.actors], remove=True)
-    if video.titleSort:  # 判断是否已经有标题
-        con = video.titleSort
-        if (check_contain_chinese(con) or RECOVER):
-            SortTitle = chinese2pinyin(title)
-            SortTitle=removePunctuation(SortTitle)
-            try:
-                video.editSortTitle(SortTitle)
-            except:
-                print("Edit SortTitle error")
-        #     continue
-        # continue
 tags = {
         "Action":"动作",
         "Adventure":"冒险",
@@ -137,6 +122,24 @@ def updategenre(video,genres):
     if len(englist) >0: 
         video.addGenre(chlist, locked=False)
         video.removeGenre(englist, locked=False)
+
+def singleVideo(video):
+    title = video.title
+    video._edit_tags(tag="actor", items=[x.tag for x in video.actors], remove=True)
+    if video.titleSort:  # 判断是否已经有标题
+        con = video.titleSort
+        if (check_contain_chinese(con) or RECOVER):
+            SortTitle = chinese2pinyin(title)
+            SortTitle=removePunctuation(SortTitle)
+            try:
+                video.editSortTitle(SortTitle)
+            except:
+                print("Edit SortTitle error")
+    if video.genres:
+        genres=video.genres
+        updategenre(video,genres)
+        #     continue
+        # continue
 
 def loopThroughAllMovies(videos):
     print("正在进行索引请稍候...")
@@ -262,7 +265,6 @@ if __name__ == '__main__':
                 except:
                     print("出错!")
                     os._exit()
-
 
 
 
