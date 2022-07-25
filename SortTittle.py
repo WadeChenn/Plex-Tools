@@ -109,6 +109,9 @@ tags = {
         "Sci-Fi":"科幻",
         "Tv Movie":"电视",
         "Disaster":"灾难",
+        "Children" :"儿童",
+        "Martial Arts":"武术",
+        "Talk":"访谈",
         }
 def updategenre(video,genres):
     englist=[]
