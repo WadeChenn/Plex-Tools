@@ -65,7 +65,7 @@ def check_contain_chinese(check_str):  # Judge chinese
 
 def chinese2pinyin(chinesestr): #chinese to pyinyin
     pyinyin_list = []
-    pinyin = pypinyin.pinyin(chinesestr, style=pypinyin.FIRST_LETTER)
+    pinyin = pypinyin.pinyin(chinesestr, style=pypinyin.FIRST_LETTER,heteronym=True)
     for i in range(len(pinyin)):
         pyinyin_list.append(str(pinyin[i][0]).upper())
     pyinyin_str = ''.join(pyinyin_list)
