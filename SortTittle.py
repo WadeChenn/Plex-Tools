@@ -112,6 +112,9 @@ tags = {
         "Children" :"儿童",
         "Martial Arts":"武术",
         "Talk":"访谈",
+        "Short" :"短剧",
+        "Game Show":"游戏",
+        "Travel":"旅行",
         }
 def updategenre(video,genres):
     englist=[]
