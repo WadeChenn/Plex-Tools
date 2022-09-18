@@ -139,7 +139,8 @@ def singleVideo(video):
             SortTitle=removePunctuation(SortTitle)
             try:
                 video.editSortTitle(SortTitle)
-            except:
+            except Exception as e:
+                print(e)
                 print("Edit SortTitle error")
     if video.genres:
         genres=video.genres
@@ -167,7 +168,8 @@ def loopThroughAllMovies(videos):
                 SortTitle=removePunctuation(SortTitle)
                 try:
                     video.editSortTitle(SortTitle)
-                except:
+                except Exception as e:
+                    print(e)
                     print("Edit SortTitle error")
             #     continue
             # continue
@@ -203,7 +205,8 @@ if __name__ == '__main__':
         print("PLEX_TOKEN = "+PLEX_TOKEN)
     try:
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
-    except:
+    except Exception as e:
+        print(e)
         print("plex url 或 token错误!")
         os._exit()
     if ENABLE_LOG:
@@ -257,7 +260,8 @@ if __name__ == '__main__':
                     videos = plex.library.sectionByID(int(LIB_NUMBER))
                     loopThroughAllMovies(videos)
                     print("\n排序成功!")
-                except:
+                except Exception as e:
+                    print(e)
                     print("出错!")
                     os._exit()
             else:
@@ -268,7 +272,8 @@ if __name__ == '__main__':
                     videos = plex.library.sectionByID(LIB_NUMBER)
                     loopThroughAllMovies(videos)
                     print("\n排序成功!")
-                except:
+                except Exception as e:
+                    print(e)
                     print("出错!")
                     os._exit()
 
