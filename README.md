@@ -1,7 +1,7 @@
 # Plex-SortTittle
-Plex-SortTittle
-当前脚本修改Plex排序名称为拼音,以便于进行中文影音的搜索及排序  
-新版可支持整理剧集标签,将英文标签转换为中文标签 (整理库时自动运行)
+## 功能介绍
+- [x] 修改Plex排序名称为拼音,以便于进行中文影音的搜索及排序 
+- [x] 整理影片标签,将英文标签转换为中文标签 (整理库时自动运行)
 
 >脚本为Python3 编写,需要安装python3环境,脚本中会自动安装所需依赖包  
 群晖默认无python3 及pip环境 可参考 [此链接配置](https://www.notion.so/0bm/pip3-073e2ec6874b4f7aa65502f573343312)
@@ -10,10 +10,9 @@ Plex-SortTittle
 ✅ 电影    ✅ 剧集    ✅ 音乐 
 
 ## 效果预览
-<img width="1063" alt="image" src="https://user-images.githubusercontent.com/68833595/192448307-328c46e2-1f21-48dd-97c6-89c442b0f3ec.png">
+<div align=center><img src="https://user-images.githubusercontent.com/68833595/192448307-328c46e2-1f21-48dd-97c6-89c442b0f3ec.png" width="1000" /></div>
+<div align=center><img src="https://user-images.githubusercontent.com/68833595/192448056-183f5cec-6e94-498f-955b-b6518b56835e.png" width="1000" /></div>
 
-<img width="1074" alt="image" src="https://user-images.githubusercontent.com/68833595/192448056-183f5cec-6e94-498f-955b-b6518b56835e.png">
- 
 ## 脚本使用方式
 1. 外部传参
 2. 脚本内部配置参数(将 `USE_INIT` 设为 `True`)
