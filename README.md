@@ -24,7 +24,7 @@ Plex-SortTittle
 - 将`SortTittle.py`文件放入 tautulli 的/config/script/目录下，`SortTittle.py`填入相关配置，将 `USE_INIT` 设为`False`
 - Tautulli 中新建通知-类型选-script
 - 选择 `SortTittle.py`
-- 入库处填入下方通知代码
+- 入库处填入下方代码
 - 保存即可（当有新影片入库，自动执行脚本）
 ```console
 <movie>-mid {rating_key}</movie><show>-mid {grandparent_rating_key}</show><season>-mid {parent_rating_key}</season>
