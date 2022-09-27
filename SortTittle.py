@@ -48,22 +48,17 @@ from plexapi.server import PlexServer
 import re
 import argparse
 
-
-
-
 def uniqify(seq):
     keys = {}
     for e in seq:
         keys[e] = 1
     return keys.keys()
 
-
 def check_contain_chinese(check_str):  # Judge chinese
     for ch in check_str:
         if '\u4e00' <= ch <= '\u9fff':
             return True
     return False
-
 
 def chinese2pinyin(chinesestr): #chinese to pyinyin
     pyinyin_list = []
