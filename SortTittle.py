@@ -124,7 +124,7 @@ def updategenre(video,genres):
             chlist.append(zhQuery)
     if len(englist) >0: 
         video.addGenre(chlist, locked=False)
-        video.removeGenre(englist, locked=False)
+        video.removeGenre(englist, locked=True)
 
 def singleVideo(video):
     title = video.title
