@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
-# 或联系 yerwer@foxmail.com
+# 或联系 yerwer@foxmail.com █
 # 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0) -log(1 or 0 是否打开进度条log)
+# 库编号 -n {section_id}  媒体编号 -mid {rating_key}  歌手编号-mid {grandparent_rating_key}
 #########################参数初始化(使用配置文件请修改此处)############################
-USE_INIT=True                               #使用当前配置请设为True,否则将尝试从外部获取参数
+USE_INIT=False                              #使用当前配置请设为True,否则False将尝试从外部获取参数
 PLEX_TOKEN="zZzxxxxxxxJssiw2zcy"            #Plextoken获取,具体方法请自行查找 "zZzxxxxxxxJssiw2zcy" *必须设置
-PLEX_URL="http://plex.xxx.cn:32400"         #Plexurl "http://plex.xxx.cn:32400" *必须设置
+PLEX_URL="http://plex.xxx.cn:32400"         #Plexurl "http://plex.xxx.cn:32400" （也可填内网地址） *必须设置
 RECOVER=False                               #是否覆盖已有的拼音排序
 LIB_NAME=''                                 #要排序的库名(存在时库编号不生效)
 LIB_NUMBER=0                                #要排序的库编号(不使用库编号则设为0)
@@ -158,7 +160,7 @@ def loopThroughAllMovies(videos):
             j=100
         if ENABLE_LOG:
             print("\r", end="")
-            print("进度: {}%: ".format(j), "▓" * (j // 2)," " * (50-j // 2), end=str(i+1)+"/"+str(video_len))
+            print("进度: {}%: ".format(j), "█" * (j // 2)," " * (50-j // 2), end=str(i+1)+"/"+str(video_len))
             sys.stdout.flush()
         title = video.title
         if video.titleSort:  # 判断是否已经有标题
@@ -276,6 +278,3 @@ if __name__ == '__main__':
                     print(e)
                     print("出错!")
                     os._exit()
-
-
-
