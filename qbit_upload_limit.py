@@ -22,7 +22,7 @@ import_list=[
 # 判断依赖库是否安装,未安装则安装对应依赖库
 sourcestr = "https://pypi.tuna.tsinghua.edu.cn/simple/"  # 镜像源
 def GetPackage(PackageName):
-    comand = "pip install " + PackageName +" -i "+sourcestr
+    comand = "pip install " + PackageName  +" -i "+sourcestr
     # 正在安装
     print("------------------正在安装" + str(PackageName) + " ----------------------")
     print(comand + "\n")
@@ -85,9 +85,10 @@ if __name__ == '__main__':
         os._exit()
     sessions = plex.sessions()
     for session in sessions:
-        address=session.player.address.split('.')[0]
-        if address not in ineraddress:
-            needlimit=True
+        for player in session.players:
+            address=player.address.split('.')[0]
+            if address not in ineraddress:
+                needlimit=True
 
     # COMMAND="test"
     if needlimit:
