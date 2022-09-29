@@ -102,6 +102,8 @@ tags = {
         "Talk":"访谈",
         "Short" :"短剧",
         "Game Show":"游戏",
+        "Food":"美食",
+        "Home and Garden":"家居园艺",
         "Travel":"旅行",
         }
 def updategenre(video,genres):
