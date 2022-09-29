@@ -47,7 +47,7 @@ import qbittorrentapi
 import argparse
 if __name__ == '__main__':
     needlimit=False
-    ineraddress={"127","100","192"}
+    ineraddress={"127","10","192"}
     # instantiate a Client using the appropriate WebUI configuration
     qbt_client = qbittorrentapi.Client(
         host=QBIT_URL,
