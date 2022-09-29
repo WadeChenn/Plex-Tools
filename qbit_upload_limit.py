@@ -93,11 +93,18 @@ if __name__ == '__main__':
     # COMMAND="test"
     if needlimit:
         print("Sessions active ({count}).".format(count=len(sessions)))
-        qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
+        if MODE==0:
+            qbt_client.transfer.speed_limits_mode = True
+        else:
+            qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
+
     else:
         print("No active sessions.")
         # print("Executing command: {cmd}".format(cmd=COMMAND))
-        qbt_client.transfer_set_upload_limit(limit=102400000)
+        if MODE==0:
+            qbt_client.transfer.speed_limits_mode = False
+        else:   
+            qbt_client.transfer_set_upload_limit(limit=102400000)
 
 
    
