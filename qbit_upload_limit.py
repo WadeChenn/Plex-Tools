@@ -85,6 +85,8 @@ if __name__ == '__main__':
         os._exit()
     sessions = plex.sessions()
     for session in sessions:
+        if session.TYPE=='track':
+            continue
         for player in session.players:
             address=player.address.split('.')[0]
             if address not in ineraddress and player.state!='paused':
