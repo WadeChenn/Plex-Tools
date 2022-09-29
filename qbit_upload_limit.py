@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
 # 或联系 yerwer@foxmail.com █
-# 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0) -log(1 or 0 是否打开进度条log)
-# 库编号 -n {section_id}  媒体编号 -mid {rating_key}  歌手编号-mid {grandparent_rating_key}
+# 配合Tautulli使用,在开始,暂停,恢复,停止时触发脚本即可 无需参数传入
 from config import *
 ##############################################################
 import os
