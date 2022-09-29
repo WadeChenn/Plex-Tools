@@ -60,10 +60,10 @@ if __name__ == '__main__':
     # however, you may want to test the provided login credentials.
     try:
         qbt_client.auth_log_in()
-        print('Qbit登入成功')
+        print('Qbit 登入成功')
     except qbittorrentapi.LoginFailed as e:
         print(e)
-        print("qbit 登入失败!")
+        print("Qbit 登入失败!")
 
     parse_xls = argparse.ArgumentParser(description="parse arguement of qbit control")
     parse_xls.add_argument('-s', nargs='?', default=0)
@@ -93,19 +93,16 @@ if __name__ == '__main__':
 
     # COMMAND="test"
     if needlimit:
-        print("Sessions active ({count}).".format(count=len(sessions)))
+        print("有 ( {count} ) 个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速".format(count=len(sessions)))
         if MODE==0:
             qbt_client.transfer.speed_limits_mode = True
         else:
             qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
 
     else:
-        print("No active sessions.")
+        print("外网没有设备在播放，Qbit不限速")
         # print("Executing command: {cmd}".format(cmd=COMMAND))
         if MODE==0:
             qbt_client.transfer.speed_limits_mode = False
         else:   
             qbt_client.transfer_set_upload_limit(limit=102400000)
-
-
-   

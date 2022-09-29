@@ -121,7 +121,7 @@ def updategenre(video,genres):
 
 def singleVideo(video):
     title = video.title
-    video._edit_tags(tag="actor", items=[x.tag for x in video.actors], remove=True)
+    video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
     if video.titleSort:  # 判断是否已经有标题
         con = video.titleSort
         if (check_contain_chinese(con) or RECOVER):
