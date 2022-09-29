@@ -8,3 +8,9 @@ LIB_NAME=''                                 #要排序的库名(存在时库编�
 LIB_NUMBER=0                                #要排序的库编号(不使用库编号则设为0)
 ENABLE_LOG=1                                #是否输出进度条
 MEDIA_ID=0
+###############################QBIT######################################
+QBIT_URL="http://qbit.***.com"
+QBIT_PORT=8082
+QBIT_MAME='admin'
+QBIT_PASSWORD='adminadmin'
+SPEEDLIMIT=1000
