@@ -87,7 +87,7 @@ if __name__ == '__main__':
     for session in sessions:
         for player in session.players:
             address=player.address.split('.')[0]
-            if address not in ineraddress:
+            if address not in ineraddress and player.state!='paused':
                 needlimit=True
 
     # COMMAND="test"
