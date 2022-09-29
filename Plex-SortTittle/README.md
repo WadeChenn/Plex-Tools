@@ -19,8 +19,8 @@
 3. 直接运行(会提示输入选择要排序的库)，运行命令 `python SortTittle.py`
 
 ## 配合 Tautulli 使用 - 外部传参
-### 方法
-- 将`SortTittle.py` `config.py`文件放入 tautulli 的/config/script/目录下，`config.py`填入相关配置
+### 方法 
+- 将`SortTittle.py` `config.py`文件放入 tautulli 的 `/config/script/` 目录下，`config.py`填入相关配置
 - Tautulli 中新建通知-类型选-script
 - 选择 `SortTittle.py`
 - 入库处填入下方代码
