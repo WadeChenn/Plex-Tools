@@ -47,6 +47,8 @@ import re
 import qbittorrentapi
 import argparse
 if __name__ == '__main__':
+    needlimit=False
+    ineraddress={"127","10","192"}
     # instantiate a Client using the appropriate WebUI configuration
     qbt_client = qbittorrentapi.Client(
         host=QBIT_URL,
@@ -81,16 +83,20 @@ if __name__ == '__main__':
         print(e)
         print("plex url 或 token错误!")
         os._exit()
-
     sessions = plex.sessions()
+    for session in sessions:
+        address=session.player.address.split('.')[0]
+        if address not in ineraddress:
+            needlimit=True
+
     # COMMAND="test"
-    if not sessions:
+    if needlimit:
+        print("Sessions active ({count}).".format(count=len(sessions)))
+        qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
+    else:
         print("No active sessions.")
         # print("Executing command: {cmd}".format(cmd=COMMAND))
         qbt_client.transfer_set_upload_limit(limit=102400000)
-    else:
-        print("Sessions active ({count}).".format(count=len(sessions)))
-        qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
 
 
    
