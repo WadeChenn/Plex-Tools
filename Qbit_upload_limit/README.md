@@ -8,7 +8,7 @@
 ## 配合 Tautulli 使用
 ### 方法
 - Qbit WEB页面中设置备用上传限速
-- 将`qbit_upload_limit.py`文件放入 tautulli 的`/config/script/`目录下，`config.py`填入相关配置，
+- 将`qbit_upload_limit.py` `config.py` 文件放入 tautulli 的`/config/script/`目录下，`config.py`填入相关配置，
 - Tautulli 中新建通知-类型选-script
 - 选择 `qbit_upload_limit.py`
 - Tautulli 触发条件勾选，`播放` `停止` `暂停` `恢复播放`
