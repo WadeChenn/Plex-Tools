@@ -1,7 +1,7 @@
 # Plex-SortTittle
 ## 功能介绍
 - [x] 修改Plex排序名称为拼音,以便于进行中文影音的搜索及排序 
-- [x] 整理影片标签,将英文标签转换为中文标签 (整理库时自动运行)
+- [x] 整理影片标签,将英文标签转换为中文标签 (配合tautulli，影片入库时自动运行)
 
 >脚本为Python3 编写,需要安装python3环境,脚本中会自动安装所需依赖包  
 群晖默认无python3 及pip环境 可参考 [此链接配置](https://www.notion.so/0bm/pip3-073e2ec6874b4f7aa65502f573343312)
@@ -19,11 +19,13 @@
 3. 直接运行(会提示输入选择要排序的库)，运行命令 `python SortTittle.py`
 
 ## 配合 Tautulli 使用 - 外部传参
-### 方法
-- 将`SortTittle.py` `config.py`文件放入 tautulli 的/config/script/目录下，`config.py`填入相关配置
+配合tautulli，影片入库时自动运行，
+### 方法 
+- 将`SortTittle.py` `config.py`文件放入 tautulli 的 `/config/script/` 目录下，`config.py`填入相关配置
 - Tautulli 中新建通知-类型选-script
 - 选择 `SortTittle.py`
-- 入库处填入下方代码
+- Triggers tab页勾选 `Recently Added`
+- Arguments tab页在 `Recently Added` 中填入下方代码
 - 保存即可（当有新影片入库，自动执行脚本）
 ```console
 <movie>-mid {rating_key}</movie><show>-mid {grandparent_rating_key}</show><season>-mid {parent_rating_key}</season>
