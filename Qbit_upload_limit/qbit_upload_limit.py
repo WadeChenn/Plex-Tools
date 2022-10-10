@@ -2,7 +2,7 @@
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
 # 或联系 yerwer@foxmail.com █
 # 配合Tautulli使用,在开始,暂停,恢复,停止时触发脚本即可 无需参数传入
-from config_save import *
+from config import *
 ##############################################################
 import os
 from importlib import import_module
