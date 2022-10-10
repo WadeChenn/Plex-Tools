@@ -90,7 +90,7 @@ if __name__ == '__main__':
         for player in session.players:
             address=player.address.split('.')[0]
             if address not in ineraddress and player.state!='paused':
-                for s in session.sessions:
+                for s in session.session:
                     bandwidth=bandwidth+s.bandwidth/1024/8
                 needlimit=True
     SPEEDLIMIT=(NET_BANDWIDTH-bandwidth)*1024*1024
