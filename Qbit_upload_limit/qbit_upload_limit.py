@@ -2,7 +2,7 @@
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
 # 或联系 yerwer@foxmail.com █
 # 配合Tautulli使用,在开始,暂停,恢复,停止时触发脚本即可 无需参数传入
-from config import *
+from config_save import *
 ##############################################################
 import os
 from importlib import import_module
@@ -90,7 +90,8 @@ if __name__ == '__main__':
         for player in session.players:
             address=player.address.split('.')[0]
             if address not in ineraddress and player.state!='paused':
-                bandwidth=bandwidth+session.sessions[0].bandwidth/1024/8
+                # for s in session.sessions:
+                bandwidth=bandwidth+session.session.bandwidth/1024/8
                 needlimit=True
     SPEEDLIMIT=(NET_BANDWIDTH-bandwidth)*1024*1024
     # COMMAND="test"
@@ -107,4 +108,4 @@ if __name__ == '__main__':
         if MODE==0:
             qbt_client.transfer.speed_limits_mode = False
         else:   
-            qbt_client.transfer_set_upload_limit(limit=102400000)
+            qbt_client.transfer_set_upload_limit(limit=0)
