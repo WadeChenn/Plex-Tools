@@ -72,9 +72,9 @@ if __name__ == '__main__':
     #get param
     parse_argument = parse_xls.parse_args()
     if parse_argument.s!=0:
-        SPEEDLIMIT=parse_argument.s*1000
+        SPEEDLIMIT=parse_argument.s*1024
     else:
-        SPEEDLIMIT=SPEEDLIMIT*1000
+        SPEEDLIMIT=SPEEDLIMIT*1024
 
     try:
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
@@ -83,17 +83,19 @@ if __name__ == '__main__':
         print("plex url 或 token错误!")
         os._exit()
     sessions = plex.sessions()
+    bandwidth=0
     for session in sessions:
         if session.TYPE=='track':
             continue
         for player in session.players:
             address=player.address.split('.')[0]
             if address not in ineraddress and player.state!='paused':
+                bandwidth=bandwidth+session.sessions[0].bandwidth/1024/8
                 needlimit=True
-
+    SPEEDLIMIT=(NET_BANDWIDTH-bandwidth)*1024*1024
     # COMMAND="test"
     if needlimit:
-        print("有 ( {count} ) 个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速".format(count=len(sessions)))
+        print("有 ( {count} ) 个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速,速度为{speedlimit}m/s".format(count=len(sessions),speedlimit=SPEEDLIMIT/1024/1024))
         if MODE==0:
             qbt_client.transfer.speed_limits_mode = True
         else:
