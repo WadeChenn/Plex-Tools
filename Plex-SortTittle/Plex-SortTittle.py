@@ -3,7 +3,7 @@
 # 或联系 yerwer@foxmail.com █
 # 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0) -log(1 or 0 是否打开进度条log)
 # 库编号 -n {section_id}  媒体编号 -mid {rating_key}  歌手编号-mid {grandparent_rating_key}
-from config import *
+from ..config_save import *
 ##############################################################
 import os
 from importlib import import_module

@@ -99,7 +99,7 @@ if __name__ == '__main__':
         if MODE==0:
             qbt_client.transfer.speed_limits_mode = True
         else:
-            qbt_client.transfer_set_upload_limit(limit=SPEEDLIMIT)
+            qbt_client.transfer_set_upload_limit(limit=int(SPEEDLIMIT))
 
     else:
         print("外网没有设备在播放，Qbit不限速")
