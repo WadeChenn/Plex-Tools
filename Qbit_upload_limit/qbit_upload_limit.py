@@ -96,12 +96,12 @@ if __name__ == '__main__':
     SPEEDLIMIT=(NET_BANDWIDTH-bandwidth)*1024*1024
     # COMMAND="test"
     if needlimit:
-        print("有 ( {count} ) 个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速,速度为{speedlimit}m/s".format(count=len(sessions),speedlimit=SPEEDLIMIT/1024/1024))
         if MODE==0:
+            print("有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，Qbit开始切换为备用限速".format(count=len(sessions)))
             qbt_client.transfer.speed_limits_mode = True
         else:
+            print("有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速：【 {speedlimit} MiB/s 】".format(count=len(sessions),speedlimit=round(SPEEDLIMIT/1024/1024,1)))
             qbt_client.transfer_set_upload_limit(limit=int(SPEEDLIMIT))
-
     else:
         print("外网没有设备在播放，Qbit不限速")
         # print("Executing command: {cmd}".format(cmd=COMMAND))
