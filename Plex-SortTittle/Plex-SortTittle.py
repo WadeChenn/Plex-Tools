@@ -136,6 +136,7 @@ def singleVideo(video):
                 print("Edit SortTitle error")
 
     if video.genres:
+        video.reload()
         genres=video.genres
         updategenre(video,genres)
 
