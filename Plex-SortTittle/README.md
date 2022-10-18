@@ -28,7 +28,7 @@
 - Arguments tab页在 `Recently Added` 中填入下方代码
 - 保存即可（当有新影片入库，自动执行脚本）
 ```console
-<movie>-mid 1</movie><show>-mid 1</show><season>-mid 1</season>
+-mid 1
 ```
 <div align=center><img src="https://user-images.githubusercontent.com/68833595/192447181-58b6f04d-feab-4eba-943f-bc19dfa9c2c1.png" width="1000" /></div>
 
