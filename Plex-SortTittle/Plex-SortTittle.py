@@ -123,7 +123,7 @@ def updategenre(video,genres):
 
 def singleVideo(video):
     title = video.title
-    video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
+    # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
     if video.titleSort:  # 判断是否已经有标题
         con = video.titleSort
         if (check_contain_chinese(con) or RECOVER):
@@ -134,11 +134,10 @@ def singleVideo(video):
             except Exception as e:
                 print(e)
                 print("Edit SortTitle error")
+
     if video.genres:
         genres=video.genres
         updategenre(video,genres)
-        #     continue
-        # continue
 
 def loopThroughAllMovies(videos):
     print("正在进行索引请稍候...")
@@ -222,10 +221,29 @@ if __name__ == '__main__':
         # libtable.append(section.title)
     print("--------------------------------------")
     # MEDIA_ID=8905
+    # MEDIA_ID = 20237
     if MEDIA_ID:
-        video=plex.library.search(id=MEDIA_ID)
+        videos=plex.library.recentlyAdded()
+        print("开始处理近10个添加的媒体 ")
+        videoNum=0
+        for video in videos:
+            videoNum=videoNum+1
+            if videoNum>10 :
+                break
+            if video.type =="season":
+                parentkey=video.parentRatingKey
+                tvshows=plex.library.search(id=parentkey)
+                # plex.library.
+                print(tvshows[0].title)
+                singleVideo(tvshows[0])
+            else:
+                print(video.title)
+                singleVideo(video)
+
+        # loopThroughAllMovies(videos)
+
+        # video=plex.library.search(id=MEDIA_ID)
         # plex.library.
-        singleVideo(video[0])
     else:
         if len(LIB_NAME)>0:
             if LIB_NAME =="all":
