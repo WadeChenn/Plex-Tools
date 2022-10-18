@@ -224,13 +224,20 @@ if __name__ == '__main__':
     # MEDIA_ID = 20237
     if MEDIA_ID:
         videos=plex.library.recentlyAdded()
+        print("开始处理近10个添加的媒体 ")
+        videoNum=0
         for video in videos:
+            videoNum=videoNum+1
+            if videoNum>10 :
+                break
             if video.type =="season":
                 parentkey=video.parentRatingKey
                 tvshows=plex.library.search(id=parentkey)
                 # plex.library.
+                print(tvshows[0].title)
                 singleVideo(tvshows[0])
             else:
+                print(video.title)
                 singleVideo(video)
 
         # loopThroughAllMovies(videos)
