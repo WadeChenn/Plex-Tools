@@ -17,3 +17,7 @@ QBIT_PASSWORD='adminadmin'
 SPEEDLIMIT=1000                              #单位为kb
 MODE=0                                       #限速模式 0:切换备用速度 1:直接限制速度为SPEEDLIMIT
 NET_BANDWIDTH=20                             #网络总带宽 m/s
+
+################################MR#########################################
+MR_AN="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6Zm***********************JleHAiOjE2NjYxNDU1NzZ9.THM-98Z1AZWdu_xyOeRBe7RzMc4gUUJhQv-BtBFcW7c"
+MR_URL="http://mr.****.com:60"   
