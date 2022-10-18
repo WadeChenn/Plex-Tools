@@ -166,6 +166,7 @@ def loopThroughAllMovies(videos):
             #     continue
             # continue
         if video.genres:
+            video.reload()
             genres=video.genres
             updategenre(video,genres)
 
