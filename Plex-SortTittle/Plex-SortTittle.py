@@ -105,6 +105,7 @@ tags = {
         "Food":"美食",
         "Home and Garden":"家居园艺",
         "Travel":"旅行",
+        "News":"新闻",
         }
 def updategenre(video,genres):
     englist=[]
