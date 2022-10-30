@@ -1,4 +1,6 @@
 # Qbit_upload_limit
+## 注意 脚本会自动安装所需要模块，qbitapi模块存在无安装权限问题 需要手动进去tautulli终端内安装 pip3 install qbittorrent-api
+
 ## 功能介绍
 - [x] 通过检测 Plex 播放状态，有外网设备正在播放时，对 Qbit 进行上传限速,内网设备播放不限速
 - [x] 配合 Tautulli 使用，在 `开始` `暂停` `恢复` `停止`时触发脚本即可，无需参数传入
