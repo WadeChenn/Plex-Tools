@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
 # 有问题提交Issue https://github.com/WadeChenn/Plex-SortTittle
-# 或联系 yerwer@foxmail.com █
+# 或联系 yerwer@foxmail.com
 # 库名参数-l (库名或 all ) -n (库编号) -c (是否覆盖 1 or 0) -log(1 or 0 是否打开进度条log)
-# 库编号 -n {section_id}  媒体编号 -mid {rating_key}  歌手编号-mid {grandparent_rating_key}
-from config import *
 ##############################################################
+
+from config import *
 import os
 from importlib import import_module
 from pickle import FALSE, TRUE
 import sys
 import urllib
-
+import requests
 #########################依赖库初始化###########################
 # 依赖库列表
 import_list=[
@@ -39,17 +38,22 @@ from plexapi.server import PlexServer
 import re
 import argparse
 
+
+
+
 def uniqify(seq):
     keys = {}
     for e in seq:
         keys[e] = 1
     return keys.keys()
 
+
 def check_contain_chinese(check_str):  # Judge chinese
     for ch in check_str:
         if '\u4e00' <= ch <= '\u9fff':
             return True
     return False
+
 
 def chinese2pinyin(chinesestr): #chinese to pyinyin
     pyinyin_list = []
@@ -102,10 +106,7 @@ tags = {
         "Talk":"访谈",
         "Short" :"短剧",
         "Game Show":"游戏",
-        "Food":"美食",
-        "Home and Garden":"家居园艺",
         "Travel":"旅行",
-        "News":"新闻",
         }
 def updategenre(video,genres):
     englist=[]
@@ -118,13 +119,11 @@ def updategenre(video,genres):
             chlist.append(zhQuery)
     if len(englist) >0: 
         video.addGenre(chlist, locked=False)
-        video.removeGenre(englist, locked=True)
-    else:
-        video.addGenre(chlist,locked=True)
+        video.removeGenre(englist, locked=False)
 
 def singleVideo(video):
     title = video.title
-    # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
+    video._edit_tags(tag="actor", items=[x.tag for x in video.actors], remove=True)
     if video.titleSort:  # 判断是否已经有标题
         con = video.titleSort
         if (check_contain_chinese(con) or RECOVER):
@@ -135,13 +134,13 @@ def singleVideo(video):
             except Exception as e:
                 print(e)
                 print("Edit SortTitle error")
-
     if video.genres:
-        video.reload()
         genres=video.genres
         updategenre(video,genres)
+        #     continue
+        # continue
 
-def loopThroughAllMovies(videos):
+def loopThroughAllMovies(videos,mdtype='movie'):
     print("正在进行索引请稍候...")
     video_len=len(videos.all())
     for video,i in zip(videos.all(),range(video_len)):
@@ -151,25 +150,31 @@ def loopThroughAllMovies(videos):
             j=100
         if ENABLE_LOG:
             print("\r", end="")
-            print("进度: {}%: ".format(j), "█" * (j // 2)," " * (50-j // 2), end=str(i+1)+"/"+str(video_len))
+            print("进度: {}%: ".format(j), "▓" * (j // 2)," " * (50-j // 2), end=str(i+1)+"/"+str(video_len))
             sys.stdout.flush()
         title = video.title
-        if video.titleSort:  # 判断是否已经有标题
-            con = video.titleSort
-            if (check_contain_chinese(con) or RECOVER):
-                SortTitle = chinese2pinyin(title)
-                SortTitle=removePunctuation(SortTitle)
-                try:
-                    video.editSortTitle(SortTitle)
-                except Exception as e:
-                    print(e)
-                    print("Edit SortTitle error")
-            #     continue
-            # continue
-        if video.genres:
-            video.reload()
-            genres=video.genres
-            updategenre(video,genres)
+        guids=video.guids
+        tmdbid=''
+        for v in guids:
+            if v.id.split("://")[0]== 'tmdb':
+                tmdbid=v.id.split("://")[1]
+        movie_type="Movie"
+        season_index=str(1)
+        if mdtype=='show':
+            for n in range(video.childCount):
+                movie_type='TV&season)number='+str(n+1)
+                url=MR_URL+'/api/subscribe/sub_tmdb?tmdb_id='+tmdbid+'&media_type='+movie_type
+                headers = {'Authorization':'Bearer '+MR_AN}
+                response = requests.get(url=url,headers=headers)
+                customer_list = response.json()
+        else:
+            url=MR_URL+'/api/subscribe/sub_tmdb?tmdb_id='+tmdbid+'&media_type='+movie_type
+            print(url)
+            headers = {'Authorization':'Bearer '+MR_AN}
+            response = requests.get(url=url,headers=headers)
+            customer_list = response.json()
+        # print(customer_list)
+
 
 if __name__ == '__main__':
 
@@ -209,83 +214,51 @@ if __name__ == '__main__':
         print("Start Serching!")
         print("--------------------------------------")
     libtable=[]
-    # ddd=plex.library.search(guid='plex://movie/5d7768d2ebdf2200209c912f')
-    # print(ddd)
-    # ddd=plex.library.search(id=8904)
-    # print(ddd)
     for section in plex.library.sections():
-        # if section.type == 'show' or section.type =='movie':
         print(section.title,section.key)
-        # print(section.collections.title)
-
         libtable.append(section.title)
-    # for collection in plex.library.collections():
-        # print(collection.title,collection.key)
-        # libtable.append(section.title)
     print("--------------------------------------")
-    # MEDIA_ID=8905
-    # MEDIA_ID = 20237
-    if MEDIA_ID:
-        videos=plex.library.recentlyAdded()
-        print("开始处理近10个添加的媒体 ")
-        videoNum=0
-        for video in videos:
-            videoNum=videoNum+1
-            if videoNum>10 :
-                break
-            if video.type =="season":
-                parentkey=video.parentRatingKey
-                tvshows=plex.library.search(id=parentkey)
-                # plex.library.
-                print(tvshows[0].title)
-                singleVideo(tvshows[0])
-            else:
-                print(video.title)
-                singleVideo(video)
 
-        # loopThroughAllMovies(videos)
-
-        # video=plex.library.search(id=MEDIA_ID)
-        # plex.library.
-    else:
-        if len(LIB_NAME)>0:
-            if LIB_NAME =="all":
-                print("All libs Start!")
-                # loopThroughAllMovies(plex.library)
-                # print("\n排序成功!")
-                for i in range(len(libtable)):
-                    print("\nStart NO."+str(i)+" "+libtable[i])
-                    videos = plex.library.section(libtable[i])
-                    loopThroughAllMovies(videos)
-                print("\n排序成功!")
-            else:
-                print("指定库为:"+LIB_NAME+" Start!")
-                try:
-                    videos = plex.library.section(LIB_NAME)
-                    loopThroughAllMovies(videos)
-                    print("\n排序成功!")
-                except:
-                    print("库名错误!")
-
+    if len(LIB_NAME)>0:
+        if LIB_NAME =="all":
+            print("All libs Start!")
+            for i in range(len(libtable)):
+                print("\nStart NO."+str(i)+" "+libtable[i])
+                videos = plex.library.section(libtable[i])
+                loopThroughAllMovies(videos)
+            print("\n推送订阅成功!")
         else:
-            if LIB_NUMBER != 0:
-                try:
-                    videos = plex.library.sectionByID(int(LIB_NUMBER))
-                    loopThroughAllMovies(videos)
-                    print("\n排序成功!")
-                except Exception as e:
-                    print(e)
-                    print("出错!")
-                    os._exit()
-            else:
-                print("未设定库名")
-                LIB_NUMBER = input('请输入你要排序的库编号：')
-                LIB_NUMBER=int(LIB_NUMBER)
-                try:
-                    videos = plex.library.sectionByID(LIB_NUMBER)
-                    loopThroughAllMovies(videos)
-                    print("\n排序成功!")
-                except Exception as e:
-                    print(e)
-                    print("出错!")
-                    os._exit()
+            print("指定库为:"+LIB_NAME+" Start!")
+            try:
+                videos = plex.library.section(LIB_NAME)
+                mdtype=videos.TYPE
+                loopThroughAllMovies(videos,mdtype)
+                print("\n推送订阅成功!")
+            except:
+                print("库名错误!")
+
+    else:
+        if LIB_NUMBER != 0:
+            try:
+                videos = plex.library.sectionByID(int(LIB_NUMBER))
+                loopThroughAllMovies(videos)
+                print("\n推送订阅成功!")
+            except Exception as e:
+                print(e)
+                print("出错!")
+                os._exit()
+        else:
+            print("未设定库名")
+            LIB_NUMBER = input('请输入你要推送订阅的库编号：')
+            LIB_NUMBER=int(LIB_NUMBER)
+            try:
+                videos = plex.library.sectionByID(LIB_NUMBER)
+                mdtype=videos.TYPE
+                loopThroughAllMovies(videos,mdtype)
+                print("\n推送订阅成功!")
+            except Exception as e:
+                print(e)
+                print("出错!")
+                os._exit()
+
+
