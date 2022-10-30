@@ -137,16 +137,35 @@ def singleVideo(video):
             except Exception as e:
                 print(e)
                 print("Edit SortTitle error")
-    for name in top250:
-        print(name+" : "+title)
-        if name==title:
-            print("Add Top250: "+title)
-            removelist=[]
-            chlist=[]
-            removelist.append("Top250")
-            chlist.append("IMDBTop250")
-            video.removeGenre(removelist, locked=True)
-            video.addGenre(chlist,locked=True)
+        for name in IMDBTop250:
+            hastag=0
+            if name==title:
+                for tag in video.genres:
+                    if tag.tag=="IMDBTop250":
+                        hastag=1
+                        # rmlist=[]
+                        # rmlist.append("Top250")
+                        # print('remove Top250')
+                        # video.removeGenre(rmlist, locked=True)
+
+                if hastag:
+                    break
+                chlist=[]
+                chlist.append("IMDBtop250")
+                video.addGenre(chlist,locked=True)
+
+        for name in DouBanTop250:
+            hastag=0
+            if name==title:
+                for tag in video.genres:
+                    if tag.tag=="DouBanTop250":
+                        hastag=1
+                if hastag:
+                    break
+                chlist=[]
+                chlist.append("DouBanTop250")
+                video.addGenre(chlist,locked=True)
+
 
     if video.genres:
         video.reload()
