@@ -30,7 +30,8 @@
 ```console
 -mid 1
 ```
-<div align=center><img src="https://user-images.githubusercontent.com/68833595/192447181-58b6f04d-feab-4eba-943f-bc19dfa9c2c1.png" width="1000" /></div>
+![image](https://user-images.githubusercontent.com/18086565/198870059-744c5dac-398e-4c33-bd93-727e938ba56b.png)
+
 
 
 ## TODO list
