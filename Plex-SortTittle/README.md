@@ -2,6 +2,7 @@
 ## 功能介绍
 - [x] 修改Plex排序名称为拼音,以便于进行中文影音的搜索及排序 
 - [x] 整理影片标签,将英文标签转换为中文标签 (配合tautulli，影片入库时自动运行)
+- [x] 自动打标签,自动识别豆瓣/IMDBTOP250影片自动添加标签 方便分类查询 (配合tautulli，影片入库时自动运行)
 
 >脚本为Python3 编写,需要安装python3环境,脚本中会自动安装所需依赖包  
 群晖默认无python3 及pip环境 可参考 [此链接配置](https://www.notion.so/0bm/pip3-073e2ec6874b4f7aa65502f573343312)
@@ -30,8 +31,7 @@
 ```console
 -mid 1
 ```
-<div align=center><img src="https://user-images.githubusercontent.com/68833595/192447181-58b6f04d-feab-4eba-943f-bc19dfa9c2c1.png" width="1000" /></div>
-
+<img width="1022" alt="image" src="https://user-images.githubusercontent.com/68833595/199144554-2f0afc9f-8f0a-4b70-aace-b70116d29c23.png">
 
 ## TODO list
 - [ ] 添加集合排序规则修改
