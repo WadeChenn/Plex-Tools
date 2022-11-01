@@ -31,9 +31,7 @@
 ```console
 -mid 1
 ```
-![image](https://user-images.githubusercontent.com/18086565/198870059-744c5dac-398e-4c33-bd93-727e938ba56b.png)
-
-
+<img width="1022" alt="image" src="https://user-images.githubusercontent.com/68833595/199144554-2f0afc9f-8f0a-4b70-aace-b70116d29c23.png">
 
 ## TODO list
 - [ ] 添加集合排序规则修改
