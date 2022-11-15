@@ -18,7 +18,8 @@ def after_setup(plugin_meta: PluginMeta, config: Dict[str, Any]):
     函数接收参数固定。第一个为插件元信息对象，第二个为插件配置（如有）
     """
     # plexst.set_config(config.get('webhook'), config.get('proxy'))
-    _LOGGER.info(f'{plugin_meta.manifest.title}加载成功，Webhook: {config.get("webhook")} Proxy: {config.get("proxy")}')
+    # _LOGGER.info(f'{plugin_meta.manifest.title}加载成功，Webhook: {config.get("webhook")} Proxy: {config.get("proxy")}')
+    _LOGGER.info(f'{plugin_meta.manifest.title}加载成功')
 
 
 @plugin.config_changed

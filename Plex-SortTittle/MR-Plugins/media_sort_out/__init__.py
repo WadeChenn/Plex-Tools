@@ -3,3 +3,4 @@
 也可以把命令和事件直接写在__init__文件里，没有限制
 """
 from .event import *
+from .command import *

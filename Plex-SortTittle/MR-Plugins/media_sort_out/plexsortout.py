@@ -239,18 +239,19 @@ class plexsortout:
                 genres=video.genres
                 self.updategenre(video,genres)
 
-
-    def process(self):
+    def process_all(self):
         # if os.path.isfile('./firstboot'):
         #     pass
         # else:
-        #     print("First Boot All libs Start!")
-        #     for i in range(len(libtable)):
-        #         print("\nStart NO."+str(i)+" "+libtable[i])
-        #         videos = plex.library.section(libtable[i])
-        #         loopThroughAllMovies(videos)
-        #     print("\n排序成功!")
+        print("First Boot All libs Start!")
+        for i in range(len(libtable)):
+            print("\nStart NO."+str(i)+" "+libtable[i])
+            videos = plex.library.section(libtable[i])
+            loopThroughAllMovies(videos)
+        print("\n排序成功!")
             
+    def process(self):
+
         servertype=MediaServerInstance.server_type
         if servertype == "plex":
             plex=MediaServerInstance.plex
