@@ -244,11 +244,21 @@ class plexsortout:
         #     pass
         # else:
         print("First Boot All libs Start!")
-        for i in range(len(libtable)):
-            print("\nStart NO."+str(i)+" "+libtable[i])
-            videos = plex.library.section(libtable[i])
-            loopThroughAllMovies(videos)
-        print("\n排序成功!")
+        servertype=MediaServerInstance.server_type
+        if servertype == "plex":
+            plex=MediaServerInstance.plex
+            libtable=[]
+            for section in plex.library.sections():
+                # if section.type == 'show' or section.type =='movie':
+                print(section.title,section.key)
+                # print(section.collections.title)
+                libtable.append(section.title)
+                
+            for i in range(len(libtable)):
+                print("\nStart NO."+str(i)+" "+libtable[i])
+                videos = plex.library.section(libtable[i])
+                self.loopThroughAllMovies(videos)
+            print("\n排序成功!")
             
     def process(self):
 
