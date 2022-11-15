@@ -121,6 +121,7 @@ tags = {
     "Soap": "肥皂剧",
     "Talk Show": "脱口秀",
     "Film-Noir": "黑色",
+    "Indie": "独立",
 }
 
 
