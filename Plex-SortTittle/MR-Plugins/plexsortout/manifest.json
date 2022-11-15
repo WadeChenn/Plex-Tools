@@ -1,6 +1,6 @@
 {
   "name": "plexsortout",
-  "title": "自动翻译标签&&拼音排序&&添加TOP250标签",
+  "title": "Plex自动翻译标签&&拼音排序&&添加TOP250标签",
   "author": "BeiMou(yewei)",
   "description": "下载完成后，整理新媒体:自动翻译标签&&拼音排序&&添加TOP250标签。",
   "version": "0.1",
@@ -8,7 +8,7 @@
   "config_field": [
 
   ],
-  "logoUrl":"/plugins/media_sort_out/logo.jpg",
+  "logoUrl":"/plugins/plexsortout/logo.jpg",
   "githubUrl": "https://github.com/WadeChenn/Plex-Tools/tree/main/Plex-SortTittle/MR-Plugins",
   "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools"
 }
