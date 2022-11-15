@@ -1,11 +1,11 @@
 {
-  "name": "自动翻译标签&&拼音排序&&添加TOP250标签",
+  "name": "plexsortout",
+  "title": "自动翻译标签&&拼音排序&&添加TOP250标签",
   "author": "BeiMou(yewei)",
-  "description": "下载完成后，整理新媒体:自动翻译标签&&拼音排序&&添加TOP250标签",
+  "description": "下载完成后，整理新媒体:自动翻译标签&&拼音排序&&添加TOP250标签。",
   "version": "0.1",
   "requirements": [],
-  "use_api": [],
-  "listeners": [
-    "plexsortout.py"
+  "config_field": [
+
   ]
 }
