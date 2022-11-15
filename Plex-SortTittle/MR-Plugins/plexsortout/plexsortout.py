@@ -118,6 +118,9 @@ tags = {
     "Home and Garden": "家居园艺",
     "Travel": "旅行",
     "News": "新闻",
+    "Soap": "肥皂剧",
+    "Talk Show": "脱口秀",
+    "Film-Noir": "黑色",
 }
 
 
