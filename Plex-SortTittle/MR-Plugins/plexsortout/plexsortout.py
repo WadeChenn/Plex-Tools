@@ -229,7 +229,7 @@ class plexsortout:
             if ENABLE_LOG:
                 print("\r", end="")
                 print("进度: {}%: ".format(j), "█" * (j // 2), " " * (50 - j // 2),
-                      end=str(i + 1) + "/" + str(video_len))
+                      end=str(i + 1) + "/" + str(video_len) + "\n")
                 sys.stdout.flush()
             title = video.title
             if video.titleSort:  # 判断是否已经有标题
