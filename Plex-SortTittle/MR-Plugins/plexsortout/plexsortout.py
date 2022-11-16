@@ -185,7 +185,7 @@ class plexsortout:
                 hastag = 0
                 if name == title:
                     for tag in video.genres:
-                        if tag.tag == "IMDBTop250":
+                        if tag.tag == "IMDB TOP 250":
                             hastag = 1
                             # rmlist=[]
                             # rmlist.append("Top250")
@@ -195,19 +195,19 @@ class plexsortout:
                     if hastag:
                         break
                     chlist = []
-                    chlist.append("IMDBtop250")
+                    chlist.append("IMDB TOP 250")
                     video.addGenre(chlist, locked=True)
 
             for name in DouBanTop250:
                 hastag = 0
                 if name == title:
                     for tag in video.genres:
-                        if tag.tag == "DouBanTop250":
+                        if tag.tag == "豆瓣 TOP 250":
                             hastag = 1
                     if hastag:
                         break
                     chlist = []
-                    chlist.append("DouBanTop250")
+                    chlist.append("豆瓣 TOP 250")
                     video.addGenre(chlist, locked=True)
 
         if video.genres:
