@@ -6,22 +6,18 @@ import sys
 from moviebotapi import MovieBotServer
 from moviebotapi.core.models import MediaType
 from moviebotapi.core.session import AccessKeySession
-# SERVER_URL="http://mr.0bm.cn:60/"
-# ACCESS_KEY="seVcjIU36mW7AXKEQ5DHFfNpw4lyJqxO"
-# server = MovieBotServer(AccessKeySession(SERVER_URL, ACCESS_KEY))
+
 from mbot.openapi import mbot_api
 server = mbot_api
-import conftest as utils
-
-# PLEX_URL = "http://plex.0bm.cn:32400"
-# PLEX_TOKEN = "zZzHtEx-zFGJssiw2zcy"
-
-# plex = PlexServer(PLEX_URL, PLEX_TOKEN)
-
 
 class plexchineseactor:
     def process_single(self,video):
+        TypeDic={
+            'show':MediaType.TV,
+            'movie':MediaType.Movie
+        }
         video.reload()
+        _LOGGER.info(video.title)
         guids=video.guids
         # 获取tmdbid
         tmdbid=''
@@ -63,13 +59,16 @@ class plexchineseactor:
                     video.edit(**edits)
                     ActorNum=ActorNum+1
         else:
-            print("error!")
+            # print("error!")
+            _LOGGER.error("获取到的中文演员信息为空! "+video)
+
     def process(self):
         servertype = MediaServerInstance.server_type
         if servertype == "plex":
             plex = MediaServerInstance.plex
             videos = plex.library.recentlyAdded()
-            print("开始处理近10个添加的媒体 ")
+            # print("开始处理近10个添加的媒体 ")
+            _LOGGER.info("开始处理近10个添加的媒体")
             videoNum = 0
             for video in videos:
                 videoNum = videoNum + 1
@@ -79,7 +78,8 @@ class plexchineseactor:
                     parentkey = video.parentRatingKey
                     tvshows = plex.library.search(id=parentkey)
                     # plex.library.
-                    print(tvshows[0].title)
+                    # print(tvshows[0].title)
+                    # _LOGGER.info(libtable[i])
                     self.process_single(tvshows[0])
                 else:
                     print(video.title)
@@ -94,12 +94,10 @@ class plexchineseactor:
                 if section.type == 'show' or section.type == 'movie':
                     print(section.title,section.key)
                     libtable.append(section.title)
-            TypeDic={
-                'show':MediaType.TV,
-                'movie':MediaType.Movie
-            }
+
             for i in range(len(libtable)):
-                print(libtable[i])
+                # print(libtable[i])
+                _LOGGER.info(libtable[i])
                 videos = plex.library.section(libtable[i])
                 video_len=len(videos.all())
                 for video,i in zip(videos.all(),range(video_len)):
