@@ -6,9 +6,10 @@ import sys
 from moviebotapi import MovieBotServer
 from moviebotapi.core.models import MediaType
 from moviebotapi.core.session import AccessKeySession
-
 from mbot.openapi import mbot_api
 server = mbot_api
+_LOGGER = logging.getLogger(__name__)
+
 
 class plexchineseactor:
     def process_single(self,video):
@@ -24,7 +25,12 @@ class plexchineseactor:
         for v in guids:
             if v.id.split("://")[0]== 'tmdb':
                 tmdbid=v.id.split("://")[1]
-        data=server.meta.get_cast_crew_by_tmdb(TypeDic[video.TYPE], tmdbid)
+        _LOGGER.info("获取演员信息")
+        if video.TYPE=="show":
+            data=server.meta.get_cast_crew_by_tmdb(TypeDic[video.TYPE], tmdbid,1)
+        else:
+            data=server.meta.get_cast_crew_by_tmdb(TypeDic[video.TYPE], tmdbid)
+        _LOGGER.info("演员信息获取成功")
         ActorNum=0
         if data:
             roles=video.roles
@@ -60,7 +66,7 @@ class plexchineseactor:
                     ActorNum=ActorNum+1
         else:
             # print("error!")
-            _LOGGER.error("获取到的中文演员信息为空! "+video)
+            _LOGGER.error("获取到的中文演员信息为空! ")
 
     def process(self):
         servertype = MediaServerInstance.server_type
