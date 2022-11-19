@@ -49,7 +49,11 @@ class plexchineseactor:
                     key={}
                     tag=douban.cn_name
                     locked=1
-                    text=douban.role
+                    if douban.role =='':
+                        text='演员'
+                    else:
+                        text=douban.role
+                    
                     thumb=douban.douban_image_url
 
                     key["tag"]="actor["+str(ActorNum)+"].tag.tag"
