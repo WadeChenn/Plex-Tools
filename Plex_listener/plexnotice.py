@@ -411,7 +411,7 @@ class WatchStateUpdater:
             
             city=''
             country=''
-            if self.config.get('Locate'):
+            if self.config.get('Locate')=='1':
                 _LOGGER.info('归属地查询')
                 #ip归属地查询
                 r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
