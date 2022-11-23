@@ -267,10 +267,8 @@ class WatchStateUpdater:
         except Exception as e:
             print(e)
             # 发生异常所在的文件
-            print(e.__traceback__.tb_frame.f_globals["__file__"])
-            # 发生异常所在的行数
-            print(e.__traceback__.tb_lineno)
-            print("plex url 或 token错误!")
+            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
+            _LOGGER.error(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
         return should_fire
 
     def on_error(self, error: Error):
@@ -289,198 +287,209 @@ class WatchStateUpdater:
     def processmsg(self,event,status,playerse,temp):
         _LOGGER.info('processmsg')
         print('processmsg')
-        wxtitle=temp.get('title')
-        wxbody=temp.get('body')
-        playicon={
-            'start':'▶️',
-            'stop':'⏹️',
-            'resume':'▶️',
-            'paused':'⏹️',
-            'add':'🍿',
-        }
-        week={
-            0:"一",
-            1:"二",
-            2:"三",
-            3:"四",
-            4:"五",
-            5:"六",
-            6:"日",
-        }
-        trans={
-            0:"原始播放",
-            1:"转码播放"
-        }
-
-        key=event['key'] #媒体key
-        sessionkey=event['sessionKey']
-        state=event['state'] #播放状态
-        viewOffset=event['viewOffset'] #播放进度
-        section=self.plex.library.fetchItems(key)[0]
-        #获取媒体
-        section_media=section.media[0]
-        #获取视频流
-        streams=section_media.parts[0].streams[0]
-
-        file_size=round(section_media.parts[0].size/1024/1024/1024,1)
-        #检测是否剧集,是 查找爷节点
-        if section.TYPE=="episode":
-            show=self.plex.library.fetchItems(section.grandparentKey)[0]
-            tmdb_id=show.guids[1].id.split('//')[1]
-            media_type=MediaType.TV
-            rating=show.audienceRating
-            air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
-            title=section.grandparentTitle
-            art=show.art
-        else:
+        try:
+            wxtitle=temp.get('title')
+            wxbody=temp.get('body')
+            playicon={
+                'start':'▶️',
+                'stop':'⏹️',
+                'resume':'▶️',
+                'paused':'⏹️',
+                'add':'🍿',
+            }
+            week={
+                0:"一",
+                1:"二",
+                2:"三",
+                3:"四",
+                4:"五",
+                5:"六",
+                6:"日",
+            }
+            trans={
+                0:"原始播放",
+                1:"转码播放"
+            }
+    
+            key=event['key'] #媒体key
+            sessionkey=event['sessionKey']
+            state=event['state'] #播放状态
+            viewOffset=event['viewOffset'] #播放进度
+            section=self.plex.library.fetchItems(key)[0]
+            #获取媒体
+            section_media=section.media[0]
+            #获取视频流
+            streams=section_media.parts[0].streams[0]
+    
+            file_size=round(section_media.parts[0].size/1024/1024/1024,1)
+            #检测是否剧集,是 查找爷节点
+            if section.TYPE=="episode":
+                show=self.plex.library.fetchItems(section.grandparentKey)[0]
+                tmdb_id=show.guids[1].id.split('//')[1]
+                media_type=MediaType.TV
+                rating=show.audienceRating
+                air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
+                title=section.grandparentTitle
+                art=show.art
+            else:
+                bitrate=section_media.parts[0].streams[0].bitrate
+                air_date='{year}-{month}-{day}'.format(year=section.originallyAvailableAt.year,month=section.originallyAvailableAt.month,day=section.originallyAvailableAt.day)
+                rating=section.audienceRating
+                title=playerse.title
+                tmdb_id=section.guids[1].id.split('//')[1]
+                media_type=MediaType.Movie
+                art=section.art
             bitrate=section_media.parts[0].streams[0].bitrate
-            air_date='{year}-{month}-{day}'.format(year=section.originallyAvailableAt.year,month=section.originallyAvailableAt.month,day=section.originallyAvailableAt.day)
-            rating=section.audienceRating
-            title=playerse.title
-            tmdb_id=section.guids[1].id.split('//')[1]
-            media_type=MediaType.Movie
-            art=section.art
-        bitrate=section_media.parts[0].streams[0].bitrate
-        container=section_media.container
-        Codec=section_media.videoCodec
-        resolution=section_media.videoResolution
-        library=section.librarySectionTitle
-        current_weekday='current_weekday'
-        remaining_duration='remaining_duration'
-        timestamp='{hour}:{minute}:{second}'.format(hour=playerse.timestamp.hour,minute=playerse.timestamp.minute,second=playerse.timestamp.second)
-        datestamp='{year}-{month}-{day}'.format(year=playerse.timestamp.year,month=playerse.timestamp.month,day=playerse.timestamp.day)
-        color_space = streams.colorSpace
-        DOVI_profile = streams.DOVIProfile
-        bit_depth = streams.bitDepth
-        stream_video_dynamic_range='SDR'
-        #动态范围判断
-        if color_space==None:
-            HDR=False
-        else:
-            HDR = bool(bit_depth > 8 and 'bt2020' in color_space)
-        DV = bool(DOVI_profile)
-        if not HDR and not DV:
-            video_dynamic_range = 'SDR'
-        elif HDR:
-            video_dynamic_range = 'HDR'
-        elif DV:
-            video_dynamic_range = 'DV'
-
-        if playerse.transcode['quality_profile']:
-            quality_profile=playerse.transcode['quality_profile']
-        else:
-            quality_profile=''
-
-        #转码判断
-        transcode_decision=trans[playerse.transcode['istrans']]
-        if playerse.transcode['istrans']==0:
-            quality_profile='直接播放'
-            stream_video_dynamic_range=''
-
-        current_weekday=week[playerse.timestamp.weekday()]
-        address=playerse.address
-        username=playerse.username
-        artUrl =section.artUrl
-        token=section.artUrl.split('Plex-Token=')[1]
-        if self.config.get('UrlType'=='1'):
-            tmdbinfo=self.mrserver.tmdb.get(media_type, tmdb_id)
-            artUrl='https://image.tmdb.org/t/p/w500'+tmdbinfo.backdrop_path
-        elif self.config.get('PlexUrl')!='ispublic':
-            artUrl=self.config.get('PlexUrl')+art+'?X-Plex-Token='+token
-
-        duration=str(section_media.parts[0].duration//60000)   #单位分钟
-
-        # rating=section.audienceRating
-        Codec=section_media.videoCodec
-        library=section.librarySectionTitle
-        video_resolution=section_media.videoResolution
-        player=playerse.playerproduct
-        product=playerse.product
-
-        viewOffset=viewOffset//1000
-        second=viewOffset%60
-        minute=(viewOffset-viewOffset//3600*3600)//60
-        hour=viewOffset//3600
-        # progress_time=str(hour)+':'+str(minute)+':'+str(second)
-        progress_time='{hour}:{minute}:{second}'.format(hour=hour,minute=minute,second=second)
-
-                # air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
-        remaining_duration=round(float(duration)-viewOffset/60,1)
-        progress_percent=int(round(viewOffset/60/float(duration)*100,0))
-        bitrate = ('%.1f' %(float(bitrate)/1000))
-        #ip归属地查询
-        # r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
-        # locate=r.json()
-        # country=locate.get('country')
-        # city=locate.get('city')
-        city=''
-        country=''
-
-        # 进度条
-        progress = progress_percent
-        progress_all_num = 21
-        progress_do_text = "■"
-        progress_undo_text = "□"
-        progress_do_num = round(0.5 + ((progress_all_num * int(progress)) / 100))
-        # 处理96%-100%进度时进度条展示，正常计算时，进度大于等于96%就已是满条，需单独处理
-        if 95 < int(progress) < 100:
-            progress_do_num = progress_all_num - 1
-
-        progress_undo_num = progress_all_num - progress_do_num
-        progress_do = progress_do_text * progress_do_num
-        progress_undo = progress_undo_text * progress_undo_num
-        progress = progress_do + progress_undo
-
-        qry={
-            'icon':playicon[status],
-            'bitrate':bitrate, #码率 单位Mbps
-            'ip_address':address, #IP地址
-            'art':artUrl, #图片链接
-            'title':title, #标题
-            'user':username, #用户名
-            'library_name':library, #库名
-            'themoviedb_url':artUrl, #TMDB链接
-            'progress_percent':progress_percent, #播放百分比
-            'transcode_decision':transcode_decision, #是否转码
-            'quality_profile':quality_profile, #转码质量
-            'timestamp':timestamp, #当天时间
-            'progress_time':progress_time, #
-            'video_resolution':video_resolution, #媒体分辨率
-            'video_dynamic_range':video_dynamic_range, #动态范围
-            'rating':rating, #分数
-            'stream_video_dynamic_range':stream_video_dynamic_range, #转码后动态范围
-            'duration':duration, #总时长
-            'datestamp':datestamp, #播放日期
-            'product':product, #设备
-            'player':player, #播放器
-            'air_date':air_date, #出品日期
-            'file_size':file_size, #文件大小
-            'current_weekday':current_weekday, #星期几
-            'remaining_duration':remaining_duration, #剩余时长
-            'country':country, #ip归属地(国)
-            'city':city, #ip归属地(市)
-            'progress':progress,#进度条
-
-        }
-
-
-
-        #模板赋值
-        wxtitledst=wxtitle.format(**qry)
-        wxbodydst= wxbody.format(**qry)
-        # print(artUrl)
-        print(wxtitledst)
-        print(wxbodydst)
-
-        _LOGGER.info(wxtitledst)
-        _LOGGER.info(wxbodydst)
-        #微信推送
-        self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
-                'title': wxtitledst,
-                'a': wxbodydst,
-                'link_url': artUrl,
-                'pic_url': artUrl
-            },1)
+            container=section_media.container
+            Codec=section_media.videoCodec
+            resolution=section_media.videoResolution
+            library=section.librarySectionTitle
+            current_weekday='current_weekday'
+            remaining_duration='remaining_duration'
+            timestamp='{hour}:{minute}:{second}'.format(hour=playerse.timestamp.hour,minute=playerse.timestamp.minute,second=playerse.timestamp.second)
+            datestamp='{year}-{month}-{day}'.format(year=playerse.timestamp.year,month=playerse.timestamp.month,day=playerse.timestamp.day)
+            color_space = streams.colorSpace
+            DOVI_profile = streams.DOVIProfile
+            bit_depth = streams.bitDepth
+            stream_video_dynamic_range='SDR'
+            #动态范围判断
+            if color_space==None:
+                HDR=False
+            else:
+                HDR = bool(bit_depth > 8 and 'bt2020' in color_space)
+            DV = bool(DOVI_profile)
+            if not HDR and not DV:
+                video_dynamic_range = 'SDR'
+            elif HDR:
+                video_dynamic_range = 'HDR'
+            elif DV:
+                video_dynamic_range = 'DV'
+    
+            if playerse.transcode['quality_profile']:
+                quality_profile=playerse.transcode['quality_profile']
+            else:
+                quality_profile=''
+    
+            #转码判断
+            transcode_decision=trans[playerse.transcode['istrans']]
+            if playerse.transcode['istrans']==0:
+                quality_profile='直接播放'
+                stream_video_dynamic_range=''
+    
+            current_weekday=week[playerse.timestamp.weekday()]
+            address=playerse.address
+            username=playerse.username
+            artUrl =section.artUrl
+            token=section.artUrl.split('Plex-Token=')[1]
+            _LOGGER.info('UrlType')
+            if self.config.get('UrlType'=='1'):
+                tmdbinfo=self.mrserver.tmdb.get(media_type, tmdb_id)
+                artUrl='https://image.tmdb.org/t/p/w500'+tmdbinfo.backdrop_path
+            elif self.config.get('PlexUrl')!='ispublic':
+                artUrl=self.config.get('PlexUrl')+art+'?X-Plex-Token='+token
+    
+            duration=str(section_media.parts[0].duration//60000)   #单位分钟
+    
+            # rating=section.audienceRating
+            Codec=section_media.videoCodec
+            library=section.librarySectionTitle
+            video_resolution=section_media.videoResolution
+            player=playerse.playerproduct
+            product=playerse.product
+    
+            viewOffset=viewOffset//1000
+            second=viewOffset%60
+            minute=(viewOffset-viewOffset//3600*3600)//60
+            hour=viewOffset//3600
+            # progress_time=str(hour)+':'+str(minute)+':'+str(second)
+            progress_time='{hour}:{minute}:{second}'.format(hour=hour,minute=minute,second=second)
+    
+                    # air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
+            remaining_duration=round(float(duration)-viewOffset/60,1)
+            progress_percent=int(round(viewOffset/60/float(duration)*100,0))
+            bitrate = ('%.1f' %(float(bitrate)/1000))
+            _LOGGER.info('归属地查询')
+            #ip归属地查询
+            # r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
+            # locate=r.json()
+            # country=locate.get('country')
+            # city=locate.get('city')
+            city=''
+            country=''
+    
+            # 进度条
+            progress = progress_percent
+            progress_all_num = 21
+            progress_do_text = "■"
+            progress_undo_text = "□"
+            progress_do_num = round(0.5 + ((progress_all_num * int(progress)) / 100))
+            # 处理96%-100%进度时进度条展示，正常计算时，进度大于等于96%就已是满条，需单独处理
+            if 95 < int(progress) < 100:
+                progress_do_num = progress_all_num - 1
+    
+            progress_undo_num = progress_all_num - progress_do_num
+            progress_do = progress_do_text * progress_do_num
+            progress_undo = progress_undo_text * progress_undo_num
+            progress = progress_do + progress_undo
+    
+            qry={
+                'icon':playicon[status],
+                'bitrate':bitrate, #码率 单位Mbps
+                'ip_address':address, #IP地址
+                'art':artUrl, #图片链接
+                'title':title, #标题
+                'user':username, #用户名
+                'library_name':library, #库名
+                'themoviedb_url':artUrl, #TMDB链接
+                'progress_percent':progress_percent, #播放百分比
+                'transcode_decision':transcode_decision, #是否转码
+                'quality_profile':quality_profile, #转码质量
+                'timestamp':timestamp, #当天时间
+                'progress_time':progress_time, #
+                'video_resolution':video_resolution, #媒体分辨率
+                'video_dynamic_range':video_dynamic_range, #动态范围
+                'rating':rating, #分数
+                'stream_video_dynamic_range':stream_video_dynamic_range, #转码后动态范围
+                'duration':duration, #总时长
+                'datestamp':datestamp, #播放日期
+                'product':product, #设备
+                'player':player, #播放器
+                'air_date':air_date, #出品日期
+                'file_size':file_size, #文件大小
+                'current_weekday':current_weekday, #星期几
+                'remaining_duration':remaining_duration, #剩余时长
+                'country':country, #ip归属地(国)
+                'city':city, #ip归属地(市)
+                'progress':progress,#进度条
+    
+            }
+    
+    
+            _LOGGER.info('模板赋值')
+            # print(wxtitle)
+            # print(wxbody)
+            # _LOGGER.info(wxtitle)
+            # _LOGGER.info(wxbody)
+            #模板赋值
+            wxtitledst=wxtitle.format(**qry)
+            wxbodydst= wxbody.format(**qry)
+            # print(artUrl)
+            print(wxtitledst)
+            print(wxbodydst)
+    
+            _LOGGER.info(wxtitledst)
+            _LOGGER.info(wxbodydst)
+            #微信推送
+            self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
+                    'title': wxtitledst,
+                    'a': wxbodydst,
+                    'link_url': artUrl,
+                    'pic_url': artUrl
+                },1)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
+            _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
         
     def on_play(self, event: PlaySessionStateNotification):
         print('on_play')
@@ -509,7 +518,7 @@ class plexnotice:
         mrserver = mbot_api
         #get param
         try:
-            _LOGGER.info(f'PlexNoticeStartListen!'+PLEX_URL+PLEX_TOKEN)
+            _LOGGER.info(f'PlexNoticeStartListen!')
             servertype = MediaServerInstance.server_type
             servertype="plex"
             if servertype == "plex":
@@ -539,6 +548,9 @@ class plexnotice:
             print(e.__traceback__.tb_frame.f_globals["__file__"])
             # 发生异常所在的行数
             print(e.__traceback__.tb_lineno)
+            # 发生异常所在的文件
+            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
+            _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             print("plex url 或 token错误!")
             print("plex url 或 token错误!")
             os._exit()
