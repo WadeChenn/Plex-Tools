@@ -10,7 +10,14 @@
       "fieldName": "UrlType",
       "fieldType": "String",
       "label": "UrlType",
-      "helperText": "推送图片URL是否从TMDB获取(由于需要查询TMDB信息影响时效性)",
+      "helperText": "推送图片URL是否从TMDB获取(由于需要查询TMDB信息影响时效性) 默认使用PlexUrl",
+      "defaultValue": "0"
+    },
+    {
+      "fieldName": "Locate",
+      "fieldType": "String",
+      "label": "Locate",
+      "helperText": "是否打开归属地查询 默认不打开",
       "defaultValue": "0"
     },
     {
