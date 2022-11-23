@@ -15,7 +15,7 @@ from moviebotapi import MovieBotServer
 from moviebotapi.core.models import MediaType
 from moviebotapi.core.session import AccessKeySession
 
-from .plexevent import (
+from plexevent import (
     ActivityNotification,
     Error,
     PlaySessionStateNotification,
@@ -307,7 +307,7 @@ class WatchStateUpdater:
                 6:"日",
             }
             trans={
-                0:"原始播放",
+                0:"直接播放",
                 1:"转码播放"
             }
     
@@ -321,24 +321,33 @@ class WatchStateUpdater:
             #获取视频流
             streams=section_media.parts[0].streams[0]
     
-            file_size=round(section_media.parts[0].size/1024/1024/1024,1)
+            file_size=round(section_media.parts[0].size/1024/1024/1024,2)
             #检测是否剧集,是 查找爷节点
+            tmdb_id=''
             if section.TYPE=="episode":
                 show=self.plex.library.fetchItems(section.grandparentKey)[0]
-                tmdb_id=show.guids[1].id.split('//')[1]
+                for id in show.guids:
+                    if id.id.split('://')[0]=='tmdb':
+                        tmdb_id=id.id.split('//')[1]
+
                 media_type=MediaType.TV
                 rating=show.audienceRating
                 air_date='{0}-{1:0>2d}-{2:0>2d}'.format(show.originallyAvailableAt.year,show.originallyAvailableAt.month,show.originallyAvailableAt.day)
-                air_date = str('{0}{1:0>2d}{2:0>2d}'.format(air_date))
-
-                title=section.grandparentTitle
+                # air_date = str('{0}{1:0>2d}{2:0>2d}'.format(air_date))
+                seasonEpisode=section.seasonEpisode
+                seasonEpisode.replace('s','S')
+                seasonEpisode.replace('e','·E')
+                title=section.grandparentTitle+section.seasonEpisode
+                # title.replace()
                 art=show.art
             else:
                 bitrate=section_media.parts[0].streams[0].bitrate
                 air_date='{0}-{1:0>2d}-{2:0>2d}'.format(section.originallyAvailableAt.year,section.originallyAvailableAt.month,section.originallyAvailableAt.day)
                 rating=section.audienceRating
                 title=playerse.title
-                tmdb_id=section.guids[1].id.split('//')[1]
+                for id in section.guids:
+                    if id.id.split('://')[0]=='tmdb':
+                        tmdb_id=id.id.split('//')[1]
                 media_type=MediaType.Movie
                 art=section.art
             bitrate=section_media.parts[0].streams[0].bitrate
@@ -376,7 +385,7 @@ class WatchStateUpdater:
             #转码判断
             transcode_decision=trans[playerse.transcode['istrans']]
             if playerse.transcode['istrans']==0:
-                quality_profile='直接播放'
+                quality_profile='原始质量'
                 stream_video_dynamic_range=''
     
             current_weekday=week[playerse.timestamp.weekday()]
@@ -385,7 +394,7 @@ class WatchStateUpdater:
             artUrl =section.artUrl
             token=section.artUrl.split('Plex-Token=')[1]
             _LOGGER.info('UrlType')
-            if self.config.get('UrlType')=='1':
+            if self.config.get('UrlType')=='1' and tmdbid!='':
                 tmdbinfo=self.mrserver.tmdb.get(media_type, tmdb_id)
                 artUrl='https://image.tmdb.org/t/p/w500'+tmdbinfo.backdrop_path
             elif self.config.get('PlexUrl')!='ispublic':
@@ -408,7 +417,7 @@ class WatchStateUpdater:
             progress_time='{hour}:{minute}:{second}'.format(hour=hour,minute=minute,second=second)
     
                     # air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
-            remaining_duration=round(float(duration)-viewOffset/60,1)
+            remaining_duration=round(float(duration)-viewOffset/60,0)
             progress_percent=int(round(viewOffset/60/float(duration)*100,0))
             bitrate = ('%.1f' %(float(bitrate)/1000))
             
@@ -417,10 +426,12 @@ class WatchStateUpdater:
             if self.config.get('Locate')=='1':
                 _LOGGER.info('归属地查询')
                 #ip归属地查询
-                r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
+                r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip="127.0.0.1"))
                 locate=r.json()
-                country=locate.get('country')
-                city=locate.get('city')
+                if locate.get('statue')!='fail':
+                    country=locate.get('country')
+                    city=locate.get('city')
+
 
     
             # 进度条
