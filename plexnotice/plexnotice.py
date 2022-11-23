@@ -495,7 +495,7 @@ class WatchStateUpdater:
             print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
 
-        raise Exception(u'error')
+        # raise Exception(u'error')
         
     def on_play(self, event: PlaySessionStateNotification):
         print('on_play')
