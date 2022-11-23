@@ -94,7 +94,7 @@ class WebsocketPlayer:  # pylint: disable=too-few-public-methods
 
                 if session.transcodeSession:
                     self.transcode['istrans']=1
-                    self.transcode['quality_profile']=str(session.media[0].width)+'p · '+str(round(session.media[0].bitrate/1024,1))
+                    self.transcode['quality_profile']=str(session.media[0].width)+'p · '+str(round(session.media[0].bitrate/1024,1))+'Mbps'
                 else:
                     self.transcode['istrans']=0
     def significant_position_change(self, timestamp, new_position):
