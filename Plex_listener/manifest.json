@@ -39,7 +39,7 @@
       "fieldType": "String",
       "label": "Play",
       "helperText": "Plex开始播放通知模板",
-      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
+      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size}G \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
     },
     {
       "fieldName": "StopTitle",
@@ -53,7 +53,7 @@
       "fieldType": "String",
       "label": "Stop",
       "helperText": "Plex停止播放通知模板",
-      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
+      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size}G \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
     }
   ],
   "logoUrl":"/plugins/plexsortout/logo.jpg",
