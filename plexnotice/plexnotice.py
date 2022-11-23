@@ -328,15 +328,14 @@ class WatchStateUpdater:
                 tmdb_id=show.guids[1].id.split('//')[1]
                 media_type=MediaType.TV
                 rating=show.audienceRating
-                air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
-                air_date = str('{:0>2d}'.format(air_date))
+                air_date='{0}-{1:0>2d}-{2:0>2d}'.format(show.originallyAvailableAt.year,show.originallyAvailableAt.month,show.originallyAvailableAt.day)
+                air_date = str('{0}{1:0>2d}{2:0>2d}'.format(air_date))
 
                 title=section.grandparentTitle
                 art=show.art
             else:
                 bitrate=section_media.parts[0].streams[0].bitrate
-                air_date='{year}-{month}-{day}'.format(year=section.originallyAvailableAt.year,month=section.originallyAvailableAt.month,day=section.originallyAvailableAt.day)
-                air_date = str('{:0>2d}'.format(air_date))
+                air_date='{0}-{1:0>2d}-{2:0>2d}'.format(section.originallyAvailableAt.year,section.originallyAvailableAt.month,section.originallyAvailableAt.day)
                 rating=section.audienceRating
                 title=playerse.title
                 tmdb_id=section.guids[1].id.split('//')[1]
@@ -349,10 +348,8 @@ class WatchStateUpdater:
             library=section.librarySectionTitle
             current_weekday='current_weekday'
             remaining_duration='remaining_duration'
-            timestamp='{hour}:{minute}:{second}'.format(hour=playerse.timestamp.hour,minute=playerse.timestamp.minute,second=playerse.timestamp.second)
-            datestamp='{year}-{month}-{day}'.format(year=playerse.timestamp.year,month=playerse.timestamp.month,day=playerse.timestamp.day)
-            timestamp = str('{:0>2d}'.format(timestamp))
-            datestamp = str('{:0>2d}'.format(datestamp))
+            timestamp='{0:0>2d}:{1:0>2d}:{2:0>2d}'.format(playerse.timestamp.hour,playerse.timestamp.minute,playerse.timestamp.second)
+            datestamp='{0}-{1:0>2d}-{2:0>2d}'.format(playerse.timestamp.year,playerse.timestamp.month,playerse.timestamp.day)
 
             color_space = streams.colorSpace
             DOVI_profile = streams.DOVIProfile
