@@ -49,9 +49,9 @@ import re
 import argparse
 from time import sleep
 from plexapi.server import PlexServer
-wxtitle='{icon}{title} @{user} ⭐{rating}'
-starttemplate='{art} {themoviedb_url} ▶️{title}" @"{user}"  "{rating} {bitrate} 0:0:0 {progress_percent} {ip_address} '
-wxbody='{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}'
+# wxtitle='{icon}{title} @{user} ⭐{rating}'
+# starttemplate='{art} {themoviedb_url} ▶️{title}" @"{user}"  "{rating} {bitrate} 0:0:0 {progress_percent} {ip_address} '
+# wxbody='{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}'
 
 # starttemplate.format(art)
 # words = re.findall(r'".*?"',starttemplate)
@@ -213,12 +213,20 @@ class WatchStateUpdater:
                     session_id, state, media_key, position,self.plex
                 )
                 print("New session: %s", payload)
-                self.processmsg(payload,'start',self.players[session_id])
+                temp={
+                    'title':self.config.get('PlayTitle'),
+                    'body':self.config.get('Play')
+                }
+                self.processmsg(payload,'start',self.players[session_id],temp)
                 return True
 
             if state == "stopped":
                 # Sessions "end" when stopped
-                self.processmsg(payload,'stop',self.players[session_id])
+                temp={
+                    'title':self.config.get('PlayTitle'),
+                    'body':self.config.get('Play')
+                }
+                self.processmsg(payload,'stop',self.players[session_id],temp)
                 self.players.pop(session_id)
                 print("Session ended: %s", payload)
                 return True
@@ -258,6 +266,11 @@ class WatchStateUpdater:
             player.timestamp = now
         except Exception as e:
             print(e)
+            # 发生异常所在的文件
+            print(e.__traceback__.tb_frame.f_globals["__file__"])
+            # 发生异常所在的行数
+            print(e.__traceback__.tb_lineno)
+            print("plex url 或 token错误!")
         return should_fire
 
     def on_error(self, error: Error):
@@ -273,9 +286,11 @@ class WatchStateUpdater:
     def on_delete(self, event: TimelineEntry):
         print('on_delete')
         pass
-    def processmsg(self,event,status,playerse):
+    def processmsg(self,event,status,playerse,temp):
         _LOGGER.info('processmsg')
         print('processmsg')
+        wxtitle=temp.get('title')
+        wxbody=temp.get('body')
         playicon={
             'start':'▶️',
             'stop':'⏹️',
@@ -448,8 +463,7 @@ class WatchStateUpdater:
 
         }
 
-        global wxtitle
-        global wxbody
+
 
         #模板赋值
         wxtitledst=wxtitle.format(**qry)
@@ -476,6 +490,11 @@ class WatchStateUpdater:
             self.player_event(event)
         except Exception as e:
             print(e)
+            # 发生异常所在的文件
+            print(e.__traceback__.tb_frame.f_globals["__file__"])
+            # 发生异常所在的行数
+            print(e.__traceback__.tb_lineno)
+            print("plex url 或 token错误!")
 
     def can_scrobble(self, event: PlaySessionStateNotification):
         if not self.username_filter:
@@ -516,6 +535,11 @@ class plexnotice:
                     time.sleep(1)
         except Exception as e:
             print(e)
+            # 发生异常所在的文件
+            print(e.__traceback__.tb_frame.f_globals["__file__"])
+            # 发生异常所在的行数
+            print(e.__traceback__.tb_lineno)
+            print("plex url 或 token错误!")
             print("plex url 或 token错误!")
             os._exit()
         if ENABLE_LOG:
