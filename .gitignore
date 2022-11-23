@@ -10,3 +10,4 @@ Plex_listener/__pycache__/plexnotice.cpython-38.pyc
 Plex_listener/__pycache__/plexnotice.cpython-39.pyc
 Plex_listener/__pycache__/wx_notice.cpython-38.pyc
 Plex_listener/__pycache__/wx_notice.cpython-39.pyc
+Plex_listener/test_notice.py
