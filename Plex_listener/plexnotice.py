@@ -382,7 +382,7 @@ class WatchStateUpdater:
             artUrl =section.artUrl
             token=section.artUrl.split('Plex-Token=')[1]
             _LOGGER.info('UrlType')
-            if self.config.get('UrlType'=='1'):
+            if self.config.get('UrlType')=='1':
                 tmdbinfo=self.mrserver.tmdb.get(media_type, tmdb_id)
                 artUrl='https://image.tmdb.org/t/p/w500'+tmdbinfo.backdrop_path
             elif self.config.get('PlexUrl')!='ispublic':
