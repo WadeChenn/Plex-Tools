@@ -408,14 +408,17 @@ class WatchStateUpdater:
             remaining_duration=round(float(duration)-viewOffset/60,1)
             progress_percent=int(round(viewOffset/60/float(duration)*100,0))
             bitrate = ('%.1f' %(float(bitrate)/1000))
-            _LOGGER.info('归属地查询')
-            #ip归属地查询
-            # r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
-            # locate=r.json()
-            # country=locate.get('country')
-            # city=locate.get('city')
+            
             city=''
             country=''
+            if self.config.get('Locate'):
+                _LOGGER.info('归属地查询')
+                #ip归属地查询
+                r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
+                locate=r.json()
+                country=locate.get('country')
+                city=locate.get('city')
+
     
             # 进度条
             progress = progress_percent
@@ -486,10 +489,13 @@ class WatchStateUpdater:
                     'link_url': artUrl,
                     'pic_url': artUrl
                 },1)
+            
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
+
+        raise Exception(u'error')
         
     def on_play(self, event: PlaySessionStateNotification):
         print('on_play')
@@ -542,6 +548,7 @@ class plexnotice:
                 _LOGGER.info(f'PlexNoticeStartListen!')
                 while True:
                     time.sleep(1)
+        
         except Exception as e:
             print(e)
             # 发生异常所在的文件
@@ -559,6 +566,7 @@ class plexnotice:
             print("--------------------------------------")
             print("Start Serching!")
             print("--------------------------------------")
+        raise Exception(u'error')
 
 
     
