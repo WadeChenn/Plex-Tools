@@ -205,12 +205,12 @@ class plexsortout:
                 hastag = 0
                 if name == title:
                     for tag in video.genres:
-                        if tag.tag == "豆瓣 TOP 250":
+                        if tag.tag == "豆瓣TOP 250":
                             hastag = 1
                     if hastag:
                         break
                     chlist = []
-                    chlist.append("豆瓣 TOP 250")
+                    chlist.append("豆瓣TOP 250")
                     video.addGenre(chlist, locked=True)
 
         if video.genres:
