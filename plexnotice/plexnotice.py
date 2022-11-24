@@ -2,6 +2,7 @@ import re
 import logging
 import requests
 _LOGGER = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 ##############################################################
 import os
 from importlib import import_module
@@ -208,11 +209,12 @@ class WatchStateUpdater:
             state = payload["state"]
             media_key = payload["key"]
             position = payload["viewOffset"]
+
             if session_id not in self.players:
                 self.players[session_id] = WebsocketPlayer(
                     session_id, state, media_key, position,self.plex
                 )
-                print("New session: %s", payload)
+                _LOGGER.info("New session: %s", payload)
                 temp={
                     'title':self.config.get('PlayTitle'),
                     'body':self.config.get('Play')
@@ -220,15 +222,25 @@ class WatchStateUpdater:
                 self.processmsg(payload,'start',self.players[session_id],temp)
                 return True
 
+
             if state == "stopped":
+                # if playerse.title=='title' and playerse.username=='username':
+                #     return
                 # Sessions "end" when stopped
                 temp={
                     'title':self.config.get('PlayTitle'),
                     'body':self.config.get('Play')
                 }
-                self.processmsg(payload,'stop',self.players[session_id],temp)
+                player = self.players[session_id]
+                stopnow = datetime.now()
+                timediff = (stopnow - player.timestamp).total_seconds()
+                if timediff>5:
+                    self.processmsg(payload,'stop',self.players[session_id],temp)
+                else:
+                    _LOGGER.info('播放时间过短,不进行通知')
+
                 self.players.pop(session_id)
-                print("Session ended: %s", payload)
+                _LOGGER.info("Session ended: %s", payload)
                 return True
 
             player = self.players[session_id]
@@ -238,7 +250,7 @@ class WatchStateUpdater:
             if state != "buffering":
                 if player.media_key != media_key or player.state != state:
                     # State or playback item changed
-                    print("State/media changed: %s", payload)
+                    _LOGGER.info("State/media changed: %s", payload)
                     sessions = self.plex.sessions()
                     for session in sessions:
                         sk=session.sessionKey
@@ -257,7 +269,7 @@ class WatchStateUpdater:
                     now, position
                 ):
                     # Client continues to play and a seek was detected
-                    print("Seek detected: %s", payload)
+                    _LOGGER.info("Seek detected: %s", payload)
                     should_fire = True
 
             player.state = state
@@ -265,9 +277,6 @@ class WatchStateUpdater:
             player.position = position
             player.timestamp = now
         except Exception as e:
-            print(e)
-            # 发生异常所在的文件
-            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             _LOGGER.error(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
         return should_fire
 
@@ -282,11 +291,12 @@ class WatchStateUpdater:
         pass
 
     def on_delete(self, event: TimelineEntry):
-        print('on_delete')
+        _LOGGER.info('on_delete')
         pass
     def processmsg(self,event,status,playerse,temp):
         _LOGGER.info('processmsg')
-        print('processmsg')
+        if playerse.title=='title' and playerse.username=='username':
+                return
         try:
             wxtitle=temp.get('title')
             wxbody=temp.get('body')
@@ -322,6 +332,12 @@ class WatchStateUpdater:
             streams=section_media.parts[0].streams[0]
     
             file_size=round(section_media.parts[0].size/1024/1024/1024,2)
+            if file_size<1:
+                file_size=round(file_size*1000,0)
+                file_size=str(file_size)+'MB'
+            else:
+                file_size=str(file_size)+'GB'
+
             #检测是否剧集,是 查找爷节点
             tmdb_id=''
             if section.TYPE=="episode":
@@ -335,9 +351,9 @@ class WatchStateUpdater:
                 air_date='{0}-{1:0>2d}-{2:0>2d}'.format(show.originallyAvailableAt.year,show.originallyAvailableAt.month,show.originallyAvailableAt.day)
                 # air_date = str('{0}{1:0>2d}{2:0>2d}'.format(air_date))
                 seasonEpisode=section.seasonEpisode
-                seasonEpisode.replace('s','S')
-                seasonEpisode.replace('e','·E')
-                title=section.grandparentTitle+section.seasonEpisode
+                seasonEpisode=seasonEpisode.replace('s','S')
+                seasonEpisode=seasonEpisode.replace('e','·E')
+                title=section.grandparentTitle+seasonEpisode
                 # title.replace()
                 art=show.art
             else:
@@ -350,6 +366,9 @@ class WatchStateUpdater:
                         tmdb_id=id.id.split('//')[1]
                 media_type=MediaType.Movie
                 art=section.art
+            if rating==None:
+                rating=''
+
             bitrate=section_media.parts[0].streams[0].bitrate
             container=section_media.container
             Codec=section_media.videoCodec
@@ -391,6 +410,7 @@ class WatchStateUpdater:
             current_weekday=week[playerse.timestamp.weekday()]
             address=playerse.address
             username=playerse.username
+
             artUrl =section.artUrl
             token=section.artUrl.split('Plex-Token=')[1]
             _LOGGER.info('UrlType')
@@ -414,7 +434,8 @@ class WatchStateUpdater:
             minute=(viewOffset-viewOffset//3600*3600)//60
             hour=viewOffset//3600
             # progress_time=str(hour)+':'+str(minute)+':'+str(second)
-            progress_time='{hour}:{minute}:{second}'.format(hour=hour,minute=minute,second=second)
+            # '{0:0>2d}:{1:0>2d}:{2:0>2d}'.format(playerse.timestamp.hour,playerse.timestamp.minute,playerse.timestamp.second)
+            progress_time='{0:0>2d}:{1:0>2d}:{2:0>2d}'.format(hour,minute,second)
     
                     # air_date='{year}-{month}-{day}'.format(year=show.originallyAvailableAt.year,month=show.originallyAvailableAt.month,day=show.originallyAvailableAt.day)
             remaining_duration=round(float(duration)-viewOffset/60,0)
@@ -426,9 +447,9 @@ class WatchStateUpdater:
             if self.config.get('Locate')=='1':
                 _LOGGER.info('归属地查询')
                 #ip归属地查询
-                r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip="127.0.0.1"))
+                r=requests.post(url='http://ip-api.com/json/{ip}?lang=zh-CN'.format(ip=address))
                 locate=r.json()
-                if locate.get('statue')!='fail':
+                if locate.get('status')!='fail':
                     country=locate.get('country')
                     city=locate.get('city')
 
@@ -483,16 +504,10 @@ class WatchStateUpdater:
     
     
             _LOGGER.info('模板赋值')
-            # print(wxtitle)
-            # print(wxbody)
-            # _LOGGER.info(wxtitle)
-            # _LOGGER.info(wxbody)
             #模板赋值
             wxtitledst=wxtitle.format(**qry)
             wxbodydst= wxbody.format(**qry)
-            # print(artUrl)
-            print(wxtitledst)
-            print(wxbodydst)
+
     
             _LOGGER.info(wxtitledst)
             _LOGGER.info(wxbodydst)
@@ -505,25 +520,15 @@ class WatchStateUpdater:
                 },1)
             
         except Exception as e:
-            print(e)
-            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
 
         # raise Exception(u'error')
         
     def on_play(self, event: PlaySessionStateNotification):
-        print('on_play')
-        _LOGGER.info(f'on_play')
-        # should_fire = False
-        try:
-            self.player_event(event)
-        except Exception as e:
-            print(e)
-            # 发生异常所在的文件
-            print(e.__traceback__.tb_frame.f_globals["__file__"])
-            # 发生异常所在的行数
-            print(e.__traceback__.tb_lineno)
-            print("plex url 或 token错误!")
+        # _LOGGER.info(f'on_play')
+        self.player_event(event)
+
+
 
     def can_scrobble(self, event: PlaySessionStateNotification):
         if not self.username_filter:
@@ -564,23 +569,7 @@ class plexnotice:
                     time.sleep(1)
         
         except Exception as e:
-            print(e)
-            # 发生异常所在的文件
-            print(e.__traceback__.tb_frame.f_globals["__file__"])
-            # 发生异常所在的行数
-            print(e.__traceback__.tb_lineno)
-            # 发生异常所在的文件
-            print(e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
             _LOGGER.error(e+e.__traceback__.tb_frame.f_globals["__file__"]+'第'+e.__traceback__.tb_lineno+'行')
-            print("plex url 或 token错误!")
-            print("plex url 或 token错误!")
-            os._exit()
-        if ENABLE_LOG:
-            print("服务器连接成功")
-            print("--------------------------------------")
-            print("Start Serching!")
-            print("--------------------------------------")
-        raise Exception(u'error')
 
 
     
