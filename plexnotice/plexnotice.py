@@ -15,7 +15,7 @@ from moviebotapi import MovieBotServer
 from moviebotapi.core.models import MediaType
 from moviebotapi.core.session import AccessKeySession
 
-from plexevent import (
+from .plexevent import (
     ActivityNotification,
     Error,
     PlaySessionStateNotification,
