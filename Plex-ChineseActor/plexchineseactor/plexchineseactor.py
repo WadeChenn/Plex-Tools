@@ -93,7 +93,7 @@ class plexchineseactor:
                     self.process_single(tvshows[0])
                 else:
                     print(video.title)
-                    self.singleVideo(video)
+                    self.process_single(video)
 
     def process_all(self):
         servertype = MediaServerInstance.server_type
