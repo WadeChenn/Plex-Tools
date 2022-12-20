@@ -1,7 +1,7 @@
 import logging
 
-from mbot.external.mediaserver import MediaServerInstance
 import sys
+from moviebotapi.core.models import MediaType
 
 RECOVER = 1
 ENABLE_LOG = 1
@@ -129,6 +129,12 @@ tags = {
 
 
 class plexsortout:
+    def setdata(self,plex,mrserver,servertype):
+        self.plexserver = plex
+        self.mrserver = mrserver
+        self.servertype = servertype
+    def setconfig(self,config):
+        self.config = config
     def uniqify(self, seq):
         keys = {}
         for e in seq:
@@ -155,7 +161,12 @@ class plexsortout:
             rule = re.compile(u"[^a-zA-Z0-9]")
             query = rule.sub('', query)
         return query
-
+    def judgegenre(self, genres):
+        for tag in genres:
+            enggenre = tag.tag
+            if enggenre in tags.keys():
+                return True
+        return False
     def updategenre(self, video, genres):
         englist = []
         chlist = []
@@ -170,8 +181,31 @@ class plexsortout:
             video.removeGenre(englist, locked=True)
         else:
             video.addGenre(chlist, locked=True)
-
-    def singleVideo(self, video):
+    def get_library(self):
+        libtable = []
+        lib = {}
+        for section in self.plexserver.library.sections():
+            _LOGGER.info(section.title)
+            lib['name']=section.title
+            lib['value']=section.title
+            libtable.append(lib.copy())
+        return libtable
+    def process_fanart(self,video):
+        TypeDic={
+            'show':MediaType.TV,
+            'movie':MediaType.Movie
+        }
+        posters = video.posters()
+        print(video.title)
+        if len(posters) > 0:
+            if posters[0].provider == 'fanarttv':
+                return
+            for poster in posters:
+                if poster.provider == 'fanarttv':
+                    video.setPoster(poster)
+                    break
+            _LOGGER.info(video.title)
+    def process_sorttitle(self,video):
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
         if video.titleSort:  # 判断是否已经有标题
@@ -181,37 +215,80 @@ class plexsortout:
                 SortTitle = self.removePunctuation(SortTitle)
                 try:
                     video.editSortTitle(SortTitle)
+                    _LOGGER.info(f'首字母排序完成 {video.titleSort}')
                 except Exception as e:
                     print(e)
                     print("Edit SortTitle error")
-            for name in IMDBTop250:
-                hastag = 0
-                if name == title:
-                    for tag in video.genres:
-                        if tag.tag == "IMDB TOP 250":
-                            hastag = 1
-                            # rmlist=[]
-                            # rmlist.append("Top250")
-                            # print('remove Top250')
-                            # video.removeGenre(rmlist, locked=True)
 
-                    if hastag:
-                        break
-                    chlist = []
-                    chlist.append("IMDB TOP 250")
-                    video.addGenre(chlist, locked=True)
+    def process_tag(self,video):
+        title = video.title
+        for name in IMDBTop250:
+            hastag = 0
+            if name == title:
+                for tag in video.genres:
+                    if tag.tag == "IMDB TOP 250":
+                        hastag = 1
+                        # rmlist=[]
+                        # rmlist.append("Top250")
+                        # print('remove Top250')
+                        # video.removeGenre(rmlist, locked=True)
 
-            for name in DouBanTop250:
-                hastag = 0
-                if name == title:
-                    for tag in video.genres:
-                        if tag.tag == "豆瓣TOP 250":
-                            hastag = 1
-                    if hastag:
-                        break
-                    chlist = []
-                    chlist.append("豆瓣TOP 250")
-                    video.addGenre(chlist, locked=True)
+                if hastag:
+                    break
+                chlist = []
+                chlist.append("IMDB TOP 250")
+                video.addGenre(chlist, locked=True)
+
+        for name in DouBanTop250:
+            hastag = 0
+            if name == title:
+                for tag in video.genres:
+                    if tag.tag == "豆瓣TOP 250":
+                        hastag = 1
+                if hastag:
+                    break
+                chlist = []
+                chlist.append("豆瓣TOP 250")
+                video.addGenre(chlist, locked=True)
+
+        if video.genres:
+
+            if self.judgegenre(video.genres):
+                video.reload()
+                genres = video.genres
+                self.updategenre(video, genres)
+
+    def singleVideo(self, video):
+        title = video.title
+        # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
+        for name in IMDBTop250:
+            hastag = 0
+            if name == title:
+                for tag in video.genres:
+                    if tag.tag == "IMDB TOP 250":
+                        hastag = 1
+                        # rmlist=[]
+                        # rmlist.append("Top250")
+                        # print('remove Top250')
+                        # video.removeGenre(rmlist, locked=True)
+
+                if hastag:
+                    break
+                chlist = []
+                chlist.append("IMDB TOP 250")
+                video.addGenre(chlist, locked=True)
+
+        for name in DouBanTop250:
+            hastag = 0
+            if name == title:
+                for tag in video.genres:
+                    if tag.tag == "豆瓣TOP 250":
+                        hastag = 1
+                if hastag:
+                    break
+                chlist = []
+                chlist.append("豆瓣TOP 250")
+                video.addGenre(chlist, locked=True)
 
         if video.genres:
             video.reload()
@@ -223,6 +300,9 @@ class plexsortout:
         video_len = len(videos.all())
         for video, i in zip(videos.all(), range(video_len)):
             video.reload()
+            #fanart图片筛选
+            self.process_fanart(video)
+
             j = int(i / video_len * 100)
             if i == video_len - 1:
                 j = 100
@@ -279,43 +359,41 @@ class plexsortout:
                 genres = video.genres
                 self.updategenre(video, genres)
 
-    def process_all(self):
-        # if os.path.isfile('./firstboot'):
-        #     pass
-        # else:
-        _LOGGER.info("First Boot All libs Start!")
-        servertype = MediaServerInstance.server_type
-        if servertype == "plex":
-            plex = MediaServerInstance.plex
-            libtable = []
-            for section in plex.library.sections():
-                # if section.type == 'show' or section.type =='movie':
-                print(section.title, section.key)
-                # print(section.collections.title)
-                libtable.append(section.title)
-
+    def process_all(self,library):
+        if 1:
+            libtable=library
             for i in range(len(libtable)):
-                print("\nStart NO." + str(i) + " " + libtable[i])
-                videos = plex.library.section(libtable[i])
-                self.loopThroughAllMovies(videos)
+                _LOGGER.info(libtable[i])
+                videos = self.plexserver.library.section(libtable[i])
+                #处理collection
+                if self.config.get('collection'):
+                    collections=videos.collections()
+                    for collection in collections:
+                        self.process_sorttitle(collection)
+                #处理视频
+                video_len=len(videos.all())
+                for video,i in zip(videos.all(),range(video_len)):
+                    _LOGGER.info(video.title)
+                    #fanart筛选
+                    if self.config.get('Poster'):
+                        self.process_fanart(video)
+                        _LOGGER.info('Fanart筛选完成')
+                    #标签翻译整理
+                    if self.config.get('Genres'):
+                        self.process_tag(video)
+                        _LOGGER.info(f"标签翻译整理完成\n {video.genres}")
+                    #首字母排序
+                    if self.config.get('SortTitle'):
+                        self.process_sorttitle(video)
+
             _LOGGER.info("\n排序成功!")
         else:
             _LOGGER.error('仅支持配置了Plex媒体库的用户使用')
-
     def process(self):
-
-        servertype = MediaServerInstance.server_type
-        if servertype == "plex":
-            plex = MediaServerInstance.plex
-            libtable = []
-            for section in plex.library.sections():
-                # if section.type == 'show' or section.type =='movie':
-                print(section.title, section.key)
-                # print(section.collections.title)
-                libtable.append(section.title)
-
-            videos = plex.library.recentlyAdded()
+        if 1:
+            videos = self.plexserver.library.recentlyAdded()
             print("开始处理近10个添加的媒体 ")
+
             videoNum = 0
             for video in videos:
                 videoNum = videoNum + 1
@@ -323,14 +401,25 @@ class plexsortout:
                     break
                 if video.type == "season":
                     parentkey = video.parentRatingKey
-                    tvshows = plex.library.search(id=parentkey)
+                    tvshows = self.plexserver.library.search(id=parentkey)
                     # plex.library.
                     print(tvshows[0].title)
-                    self.singleVideo(tvshows[0])
+                    #标签翻译整理
+                    editvideo=tvshows[0]
                 else:
                     print(video.title)
-                    self.singleVideo(video)
+                    editvideo=video
 
+                if self.config.get('Poster'):
+                    self.process_fanart(editvideo)
+                    _LOGGER.info('Fanart筛选完成')
+                # 标签翻译整理
+                if self.config.get('Genres'):
+                    self.process_tag(editvideo)
+                    _LOGGER.info(f"标签翻译整理完成\n {editvideo.genres}")
+                # 首字母排序
+                if self.config.get('SortTitle'):
+                    self.process_sorttitle(editvideo)
             _LOGGER.info(f'[Plex Sort Out] Success!')
         else:
             _LOGGER.info(f'[Plex Sort Out] [None Plex Server] Fail!')

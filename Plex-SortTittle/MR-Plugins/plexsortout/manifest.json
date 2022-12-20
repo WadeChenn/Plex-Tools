@@ -1,11 +1,46 @@
 {
   "name": "plexsortout",
-  "title": "Plex自动翻译标签&&拼音排序&&添加TOP250标签",
+  "title": "Plex工具箱",
   "author": "BeiMou(yewei)",
-  "description": "下载完成后，整理新媒体:自动翻译标签&&拼音排序&&添加TOP250标签。",
+  "description": "下载完成后，自动进行整理。",
   "version": "0.1",
   "requirements": [],
   "config_field": [
+    {
+      "fieldName": "SortTitle",
+      "fieldType": "Bool",
+      "label": "SortTitle",
+      "helperText": "是否整理首字母",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Genres",
+      "fieldType": "Bool",
+      "label": "Genres",
+      "helperText": "是否整理标签",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Collection",
+      "fieldType": "Bool",
+      "label": "Collection",
+      "helperText": "是否整理合集",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Poster",
+      "fieldType": "Bool",
+      "label": "Poster",
+      "helperText": "是否筛选海报",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "LIBRARY",
+      "fieldType": "String",
+      "label": "LIBRARY",
+      "helperText": "要处理的媒体库名称(默认全库)逗号间隔",
+      "defaultValue": "ALL"
+    }
 
   ],
   "logoUrl":"/plugins/plexsortout/logo.jpg",

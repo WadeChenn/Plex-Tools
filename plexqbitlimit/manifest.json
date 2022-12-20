@@ -1,0 +1,55 @@
+{
+  "name": "plexqbitlimit",
+  "title": "Plex/Qbit智能限速",
+  "author": "BeiMou(yewei)",
+  "description": "Plex播放Qbit智能限速",
+  "version": "0.1",
+  "requirements": [],
+  "configField": [
+    {
+      "fieldName": "QBIT_URL",
+      "fieldType": "String",
+      "label": "QBIT_URL",
+      "helperText": "qbit地址",
+      "defaultValue": "QBIT_URL"
+    },
+    {
+      "fieldName": "QBIT_PORT",
+      "fieldType": "String",
+      "label": "QBIT_PORT",
+      "helperText": "qbit端口",
+      "defaultValue": "QBIT_PORT"
+    },
+    {
+      "fieldName": "QBIT_USERNAME",
+      "fieldType": "String",
+      "label": "QBIT_USERNAME",
+      "helperText": "qbit用户名",
+      "defaultValue": "QBIT_USERNAME"
+    },
+    {
+      "fieldName": "QBIT_PASSWORD",
+      "fieldType": "String",
+      "label": "QBIT_PASSWORD",
+      "helperText": "qbit密码",
+      "defaultValue": "QBIT_PASSWORD"
+    },
+      {
+      "fieldName": "NET_BANDWIDTH",
+      "fieldType": "String",
+      "label": "NET_BANDWIDTH",
+      "helperText": "qbit上传总带宽",
+      "defaultValue": "NET_BANDWIDTH"
+    },
+
+    {
+      "fieldName": "MODE",
+      "fieldType": "Bool",
+      "label": "MODE",
+      "helperText": "是否切换到备用速度(默认依据总带宽智能限速)",
+      "defaultValue": false
+    }
+
+  ],
+  "logoUrl":"/plugins/plexqbitlimit/logo.png"
+}

@@ -2,13 +2,13 @@
   "name": "plexchineseactor",
   "title": "Plex中文演员",
   "author": "BeiMou(yewei)",
-  "description": "下载完成后，整理新媒体:自动添加中文演员信息",
+  "description": "下载完成后，整理新媒体:自动添加中文演员信息(解决老版插件锁定演员问题,运行过老版插件的需先运行解锁演员信息)",
   "version": "0.1",
   "requirements": [],
   "config_field": [
 
   ],
-  "logoUrl":"/plugins/plexsortout/logo.jpg",
+  "logoUrl":"/plugins/plexchineseactor/logo.jpg",
   "githubUrl": "https://github.com/WadeChenn/Plex-Tools/tree/main/Plex-ChineseActor",
   "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools"
 }
