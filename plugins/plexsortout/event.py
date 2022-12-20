@@ -13,10 +13,14 @@ def after_setup(plugin: PluginMeta, plugin_conf: dict):
     """
     _LOGGER.info('插件加载完成')
     libstr = plugin_conf.get('LIBRARY')
-    libtable=libstr.split(',')
-    _LOGGER.info(libtable)
+    if libstr:
+        libtable=libstr.split(',')
+        _LOGGER.info(libtable)
 
-    plugin_conf['library']=libtable
+        plugin_conf['library']=libtable
+    else:
+        _LOGGER.info('未设置LIBRARY')
+        plugin_conf['library'] = 'ALL'
     plexst.setconfig(plugin_conf)
     _LOGGER.info('SortOut参数设置完成')
     printAllMembers(plexst)
