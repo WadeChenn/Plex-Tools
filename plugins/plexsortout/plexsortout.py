@@ -219,8 +219,7 @@ class plexsortout:
                 except Exception as e:
                     print(e)
                     print("Edit SortTitle error")
-
-    def process_tag(self,video):
+    def add_top250(self,video):
         title = video.title
         for name in IMDBTop250:
             hastag = 0
@@ -228,11 +227,6 @@ class plexsortout:
                 for tag in video.genres:
                     if tag.tag == "IMDB TOP 250":
                         hastag = 1
-                        # rmlist=[]
-                        # rmlist.append("Top250")
-                        # print('remove Top250')
-                        # video.removeGenre(rmlist, locked=True)
-
                 if hastag:
                     break
                 chlist = []
@@ -250,6 +244,10 @@ class plexsortout:
                 chlist = []
                 chlist.append("豆瓣TOP 250")
                 video.addGenre(chlist, locked=True)
+    def process_tag(self,video):
+        title = video.title
+        if self.config.get('Top250'):
+            self.add_top250(video)
 
         if video.genres:
 
@@ -261,34 +259,9 @@ class plexsortout:
     def singleVideo(self, video):
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
-        for name in IMDBTop250:
-            hastag = 0
-            if name == title:
-                for tag in video.genres:
-                    if tag.tag == "IMDB TOP 250":
-                        hastag = 1
-                        # rmlist=[]
-                        # rmlist.append("Top250")
-                        # print('remove Top250')
-                        # video.removeGenre(rmlist, locked=True)
+        if self.config.get('Top250'):
+            self.add_top250(video)
 
-                if hastag:
-                    break
-                chlist = []
-                chlist.append("IMDB TOP 250")
-                video.addGenre(chlist, locked=True)
-
-        for name in DouBanTop250:
-            hastag = 0
-            if name == title:
-                for tag in video.genres:
-                    if tag.tag == "豆瓣TOP 250":
-                        hastag = 1
-                if hastag:
-                    break
-                chlist = []
-                chlist.append("豆瓣TOP 250")
-                video.addGenre(chlist, locked=True)
 
         if video.genres:
             video.reload()

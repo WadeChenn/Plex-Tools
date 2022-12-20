@@ -21,6 +21,13 @@
       "defaultValue": true
     },
     {
+      "fieldName": "Top250",
+      "fieldType": "Bool",
+      "label": "Top250",
+      "helperText": "是否添加榜单标签",
+      "defaultValue": true
+    },
+    {
       "fieldName": "Collection",
       "fieldType": "Bool",
       "label": "Collection",
