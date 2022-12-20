@@ -1,0 +1,115 @@
+{
+  "name": "plexnotice",
+  "title": "Plex动态推送",
+  "author": "BeiMou(yewei)",
+  "description": "Plex播放动态推送,后续开放入库等通知(开发不易,点击左下方赞赏码给予更大动力)",
+  "version": "1.0",
+  "requirements": [],
+  "configField": [
+    {
+      "fieldName": "UseTMDB",
+      "fieldType": "Bool",
+      "label": "UseTMDB",
+      "helperText": "推送图片URL是否从TMDB获取(由于需要查询TMDB信息影响时效性,图片质量比Plex低,关闭需配置下方plex外网链接)",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Locate",
+      "fieldType": "Bool",
+      "label": "Locate",
+      "helperText": "是否打开归属地查询 默认不打开(查询归属地影响实效性,存在失败情况)",
+      "defaultValue": false
+    },
+
+    {
+      "fieldName": "MemberBlackList",
+      "fieldType": "String",
+      "label": "MemberBlackList",
+      "helperText": "用户黑名单,设置的用户不通知,以逗号间隔",
+      "defaultValue": "member"
+    },
+    {
+      "fieldName": "LibBlackList",
+      "fieldType": "String",
+      "label": "LibBlackList",
+      "helperText": "库黑名单,在库中的影片不进行通知,以逗号间隔",
+      "defaultValue": "library"
+    },
+    {
+      "fieldName": "PlexUrl",
+      "fieldType": "String",
+      "label": "PlexUrl",
+      "helperText": "Plex公网url,样例 http://xxx.xxx.xxx:xxxx 带端口号和http(s) 最后不带/",
+      "defaultValue": "ispublic"
+    },
+    {
+      "fieldName": "PlayTitle",
+      "fieldType": "String",
+      "label": "PlayTitle",
+      "helperText": "Plex开始播放通知模板(标题)",
+      "defaultValue": "{icon}{title} @{user} ⭐{rating}"
+    },
+    {
+      "fieldName": "Play",
+      "fieldType": "String",
+      "label": "Play",
+      "helperText": "Plex开始播放通知模板",
+      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
+    },
+    {
+      "fieldName": "StopTitle",
+      "fieldType": "String",
+      "label": "StopTitle",
+      "helperText": "Plex停止播放通知模板(标题)",
+      "defaultValue": "{icon}{title} @{user} ⭐{rating}"
+    },
+    {
+      "fieldName": "Stop",
+      "fieldType": "String",
+      "label": "Stop",
+      "helperText": "Plex停止播放通知模板",
+      "defaultValue": "{library_name} · {video_resolution} · {bitrate}Mbps · {video_dynamic_range} · {duration}分钟 \n{transcode_decision} ⤷ {quality_profile} · {stream_video_dynamic_range} \n{progress} {progress_percent}% \n播放时间：{datestamp}  周{current_weekday}  {timestamp} \n观看进度：{progress_time}({progress_percent}%)  剩余{remaining_duration}分钟 \n文件大小：{file_size} \n首映日期：{air_date} \n播放设备：{player} · {product} \n设备地址：{ip_address} {country} · {city}"
+    },
+    {
+      "fieldName": "NOTIFY_GROUP_RECENTLY_ADDED_GRANDPARENT",
+      "fieldType": "Bool",
+      "label": "NOTIFY_GROUP_RECENTLY_ADDED_GRANDPARENT",
+      "helperText": "是否合并分季通知",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "NOTIFY_GROUP_RECENTLY_ADDED_PARENT",
+      "fieldType": "Bool",
+      "label": "NOTIFY_GROUP_RECENTLY_ADDED_PARENT",
+      "helperText": "是否合并分集通知",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Delay",
+      "fieldType": "String",
+      "label": "Delay",
+      "helperText": "入库通知延迟时间(单位秒,默认20秒)",
+      "defaultValue": "20"
+    },
+    {
+      "fieldName": "AddTitle",
+      "fieldType": "String",
+      "label": "AddTitle",
+      "helperText": "Plex入库通知(标题)",
+      "defaultValue":"入库:{title}"
+
+    },
+    {
+      "fieldName": "Add",
+      "fieldType": "String",
+      "label": "Add",
+      "helperText": "Plex入库通知",
+      "defaultValue":"{library_name} \n入库时间: {datestamp} 周{current_weekday} {timestamp}\n{subtitle}\n{summary}"
+
+    }
+
+  ],
+  "logoUrl":"/plugins/plexnotice/logo.png",
+  "githubUrl": "https://github.com/WadeChenn/Plex-Tools/tree/main/Plex_listener",
+  "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools"
+}
