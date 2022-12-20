@@ -8,6 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import pytz
 from moviebotapi.core.models import MediaType
+logging.basicConfig(level=logging.DEBUG)
 
 # self.ACTIVITY_SCHED = None
 _LOGGER = logging.getLogger(__name__)
@@ -112,7 +113,7 @@ class TimelineHandler(object):
 
 
 
-                    _LOGGER.debug("Tautulli TimelineHandler :: Library item '%s' (%s, grandparent %s) "
+                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s, grandparent %s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key), str(grandparent_rating_key)))
 
@@ -131,7 +132,7 @@ class TimelineHandler(object):
                     parent_set.add(rating_key)
                     self.RECENTLY_ADDED_QUEUE[parent_rating_key] = parent_set
                     #
-                    _LOGGER.debug("Tautulli TimelineHandler :: Library item '%s' (%s , parent %s) "
+                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s , parent %s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key), str(parent_rating_key)))
                     # self.clear_recently_added_queue(parent_rating_key, title,self.config,self.plex)
@@ -147,7 +148,7 @@ class TimelineHandler(object):
                     queue_set = self.RECENTLY_ADDED_QUEUE.get(rating_key, set())
                     self.RECENTLY_ADDED_QUEUE[rating_key] = queue_set
 
-                    _LOGGER.debug("Tautulli TimelineHandler :: Library item '%s' (%s) "
+                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key)))
                     # self.clear_recently_added_queue(rating_key, title,self.config,self.plex)
@@ -157,18 +158,18 @@ class TimelineHandler(object):
                     self.schedule_callback('rating_key-{}'.format(rating_key),
                                       func=self.clear_recently_added_queue,
                                       args=[rating_key, title,self.config,self.plex],
-                                      seconds=self.config.get('Delay'))
+                                      seconds=int(self.config.get('Delay')))
 
                     # Schedule a callback to clear the recently added queue
                     self.schedule_callback('rating_key-{}'.format(rating_key),
                                       func=self.clear_recently_added_queue,
                                       args=[rating_key, title,self.config,self.plex],
-                                      seconds=self.config.get('Delay'))
+                                      seconds=int(self.config.get('Delay')))
 
             # An item was deleted, make sure it is removed from the queue
             elif state_type == 9 and metadata_state == 'deleted':
                 if rating_key in self.RECENTLY_ADDED_QUEUE and not self.RECENTLY_ADDED_QUEUE[rating_key]:
-                    _LOGGER.debug("Tautulli TimelineHandler :: Library item %s "
+                    _LOGGER.info("MR TimelineHandler :: Library item %s "
                                  "removed from recently added queue."
                                  % str(rating_key))
                     self.del_keys(rating_key)
@@ -221,7 +222,7 @@ class TimelineHandler(object):
     #         plexpy.NOTIFY_QUEUE.put({'stream_data': session.copy(), 'notify_action': 'on_stop'})
     #
     #         # If session is written to the database successfully, remove the session from the session table
-    #         _LOGGER.info("Tautulli ActivityHandler :: Removing stale stream with sessionKey %s ratingKey %s from session queue"
+    #         _LOGGER.info("MR ActivityHandler :: Removing stale stream with sessionKey %s ratingKey %s from session queue"
     #                     % (session['session_key'], session['rating_key']))
     #         ap.delete_session(row_id=row_id)
     #         delete_metadata_cache(session_key)
@@ -230,7 +231,7 @@ class TimelineHandler(object):
     #         session['write_attempts'] += 1
     #
     #         if session['write_attempts'] < plexpy.CONFIG.SESSION_DB_WRITE_ATTEMPTS:
-    #             _LOGGER.warn("Tautulli ActivityHandler :: Failed to write stream with sessionKey %s ratingKey %s to the database. " \
+    #             _LOGGER.warn("MR ActivityHandler :: Failed to write stream with sessionKey %s ratingKey %s to the database. " \
     #                         "Will try again in 30 seconds. Write attempt %s."
     #                         % (session['session_key'], session['rating_key'], str(session['write_attempts'])))
     #             ap.increment_write_attempts(session_key=session_key)
@@ -240,10 +241,10 @@ class TimelineHandler(object):
     #                               args=[session_key, session['full_title'], session['user']], seconds=30)
     #
     #         else:
-    #             _LOGGER.warn("Tautulli ActivityHandler :: Failed to write stream with sessionKey %s ratingKey %s to the database. " \
+    #             _LOGGER.warn("MR ActivityHandler :: Failed to write stream with sessionKey %s ratingKey %s to the database. " \
     #                         "Removing session from the database. Write attempt %s."
     #                         % (session['session_key'], session['rating_key'], str(session['write_attempts'])))
-    #             _LOGGER.info("Tautulli ActivityHandler :: Removing stale stream with sessionKey %s ratingKey %s from session queue"
+    #             _LOGGER.info("MR ActivityHandler :: Removing stale stream with sessionKey %s ratingKey %s from session queue"
     #                         % (session['session_key'], session['rating_key']))
     #             ap.delete_session(session_key=session_key)
     #             delete_metadata_cache(session_key)
@@ -303,14 +304,14 @@ class TimelineHandler(object):
             # now = helpers.timestamp()
             #
             # if int(metadata['added_at']) < now - 86400:  # Updated more than 24 hours ago
-            #     _LOGGER.debug("Tautulli TimelineHandler :: Library item %s added more than 24 hours ago. Not notifying."
+            #     _LOGGER.info("MR TimelineHandler :: Library item %s added more than 24 hours ago. Not notifying."
             #                  % str(rating_key))
             #     notify = False
 
             # data_factory = datafactory.DataFactory()
             # if 'child_keys' not in kwargs:
             #     if data_factory.get_recently_added_item(rating_key):
-            #         _LOGGER.debug("Tautulli TimelineHandler :: Library item %s added already. Not notifying again."
+            #         _LOGGER.info("MR TimelineHandler :: Library item %s added already. Not notifying again."
             #                      % str(rating_key))
             #         notify = False
             # metadata['artUrl'] = video[0].artUrl
@@ -396,10 +397,10 @@ class TimelineHandler(object):
             # for key in all_keys:
             #     data_factory.set_recently_added_item(key)
 
-            _LOGGER.debug("Added %s items to the recently_added database table." % str(len(all_keys)))
+            _LOGGER.info("Added %s items to the recently_added database table." % str(len(all_keys)))
 
         else:
-            _LOGGER.error("Tautulli TimelineHandler :: Unable to retrieve metadata for rating_key %s" % str(rating_key))
+            _LOGGER.error("MR TimelineHandler :: Unable to retrieve metadata for rating_key %s" % str(rating_key))
 
     def get_metadata_details(self,plex,rating_key):
         week = {
@@ -507,7 +508,7 @@ class TimelineHandler(object):
     #     try:
     #         os.remove(os.path.join(plexpy.CONFIG.CACHE_DIR, 'session_metadata/metadata-sessionKey-%s.json' % session_key))
     #     except OSError as e:
-    #         _LOGGER.error("Tautulli ActivityHandler :: Failed to remove metadata cache file (sessionKey %s): %s"
+    #         _LOGGER.error("MR ActivityHandler :: Failed to remove metadata cache file (sessionKey %s): %s"
     #                      % (session_key, e))
 
 def is_chinese(uchar):

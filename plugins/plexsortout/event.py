@@ -23,7 +23,7 @@ def after_setup(plugin: PluginMeta, plugin_conf: dict):
         plugin_conf['library'] = 'ALL'
     plexst.setconfig(plugin_conf)
     _LOGGER.info('SortOut参数设置完成')
-    printAllMembers(plexst)
+    # printAllMembers(plexst)
 
 
 def printAllMembers(cls):
