@@ -34,16 +34,16 @@ class plexqbitlimit:
                 qbt_client = qbittorrentapi.Client(
                     host=config.get('QBIT_URL'),
                     port=config.get('QBIT_PORT'),
-                    username=config.get('QBIT_MAME'),
+                    username=config.get('QBIT_USERNAME'),
                     password=config.get('QBIT_PASSWORD')
                 )
 
                 try:
                     qbt_client.auth_log_in()
-                    print('Qbit 登入成功')
+                    _LOGGER.info('Qbit 登入成功')
                 except qbittorrentapi.LoginFailed as e:
-                    print(e)
-                    print("Qbit 登入失败!")
+                    _LOGGER.info(e)
+                    _LOGGER.info("Qbit 登入失败!")
 
                 sessions = self.plexserver.sessions()
                 bandwidth = 0
@@ -53,33 +53,41 @@ class plexqbitlimit:
                     for player in session.players:
                         address = player.address.split('.')[0]
                         if address not in ineraddress and player.state != 'paused':
-                            for s in session.session:
-                                bandwidth = bandwidth + s.bandwidth / 1024 / 8
+                            if session.session.bandwidth:
+                                # _LOGGER.info(f'码率为 {session.session.bandwidth}')
+                                bandwidth = bandwidth + session.session.bandwidth / 1024 / 8
+                            else:
+                                for s in session.session:
+                                    bandwidth = bandwidth + s.bandwidth / 1024 / 8
                             needlimit = True
-                SPEEDLIMIT = (config.get('NET_BANDWIDTH') - bandwidth) * 1024 * 1024
+                NET_BANDWIDTH=int(config.get('NET_BANDWIDTH'))
+                _LOGGER.info(f'播放总速度为 {bandwidth}')
+                _LOGGER.info(f'设置总带宽为 {NET_BANDWIDTH}')
+
+                SPEEDLIMIT = (NET_BANDWIDTH - bandwidth) * 1024 * 1024
                 # COMMAND="test"
                 if needlimit:
                     if config.get('MODE'):
-                        print("有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，Qbit开始切换为备用限速".format(
+                        _LOGGER.info("有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，Qbit开始切换为备用限速".format(
                             count=len(sessions)))
                         qbt_client.transfer.speed_limits_mode = True
                     else:
                         if round(SPEEDLIMIT / 1024 / 1024, 1) > 0:
-                            print(
+                            _LOGGER.info(
                                 "有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，Qbit开始限速：【 {speedlimit} MiB/s 】".format(
                                     count=len(sessions), speedlimit=round(SPEEDLIMIT / 1024 / 1024, 1)))
                             qbt_client.transfer_set_upload_limit(limit=int(SPEEDLIMIT))
                         else:
-                            print(
-                                "有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，影片所需带宽超过宽带上限，Qbit不限速".format(
+                            _LOGGER.info(
+                                "有【 {count} 】个设备正在活动，其中含有外网正在播放的设备，影片所需带宽超过宽带上限，Qbit限速100K/s".format(
                                     count=len(sessions)))
-                            qbt_client.transfer_set_upload_limit(limit=0)
+                            qbt_client.transfer_set_upload_limit(limit=100)
                 else:
-                    print("外网没有设备在播放，Qbit不限速")
+                    _LOGGER.info("外网没有设备在播放，Qbit不限速")
                     # print("Executing command: {cmd}".format(cmd=COMMAND))
                     if config.get('MODE'):
                         qbt_client.transfer.speed_limits_mode = False
                     else:
                         qbt_client.transfer_set_upload_limit(limit=0)
         except Exception as e:
-            print(e)
+            _LOGGER.info(e)

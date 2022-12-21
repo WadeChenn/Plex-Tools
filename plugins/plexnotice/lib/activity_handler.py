@@ -251,27 +251,27 @@ class TimelineHandler(object):
 
 
     def clear_recently_added_queue(self,rating_key, title,config,plex):
-        _LOGGER.info("MR TimelineHandler :: Starting callback for library item '%s' (%s) after delay.",
+        _LOGGER.debug("MR TimelineHandler :: Starting callback for library item '%s' (%s) after delay.",
                      title, str(rating_key))
 
         child_keys = self.RECENTLY_ADDED_QUEUE[rating_key]
 
         if config.get('NOTIFY_GROUP_RECENTLY_ADDED_GRANDPARENT') and len(child_keys) > 1:
-            _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s) has %s children. "
+            _LOGGER.debug("MR TimelineHandler :: Library item '%s' (%s) has %s children. "
                             "Notifying group recently added.",
                             title, str(rating_key), str(len(child_keys)))
             self.on_created(rating_key, child_keys=child_keys,plex=plex)
 
         elif child_keys:
-            # _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s) has %s children. "
+            # _LOGGER.debug("MR TimelineHandler :: Library item '%s' (%s) has %s children. "
             #                 "Notifying recently added for each child.elif child_keys:",
             #                 title, str(rating_key), str(len(child_keys)))
-            # _LOGGER.info("child_keys")
+            # _LOGGER.debug("child_keys")
             for child_key in child_keys:
                 grandchild_keys = self.RECENTLY_ADDED_QUEUE.get(child_key, [])
 
                 if config.get('NOTIFY_GROUP_RECENTLY_ADDED_PARENT') and len(grandchild_keys) > 1:
-                    _LOGGER.info("grandchild_keys >1")
+                    _LOGGER.debug("grandchild_keys >1")
                     self.on_created(child_key, child_keys=grandchild_keys,plex=plex)
 
                 elif grandchild_keys:
@@ -296,7 +296,7 @@ class TimelineHandler(object):
             'Activity': 'Added'
         })
         metadata = self.get_metadata_details(plex,rating_key)
-        _LOGGER.info("MR  TimelineHandler :: Library item '%s' (%s) added to Plex.",
+        _LOGGER.debug("MR  TimelineHandler :: Library item '%s' (%s) added to Plex.",
                      metadata['full_title'], str(rating_key))
 
         if metadata:
@@ -332,11 +332,14 @@ class TimelineHandler(object):
                 data = {'timeline_data': metadata, 'notify_action': 'on_created'}
                 data.update(kwargs)
                 print(data)
-                _LOGGER.info('模板赋值')
-                indexmin = 10000
+                # _LOGGER.info('模板赋值')
+                indexmin = 0
                 indexmax = 0
                 for child_key in kwargs.get('child_keys', []):
+
                     child=self.get_metadata_details(plex,child_key)
+                    if indexmin==0:
+                        indexmin=child.get('index')
                     indexmin= min(child.get('index'),indexmin)
                     indexmax= max(child.get('index'),indexmax)
                         # episodemax = child.get('index')

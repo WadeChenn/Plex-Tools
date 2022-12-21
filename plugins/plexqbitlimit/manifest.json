@@ -38,7 +38,7 @@
       "fieldName": "NET_BANDWIDTH",
       "fieldType": "String",
       "label": "NET_BANDWIDTH",
-      "helperText": "qbit上传总带宽",
+      "helperText": "qbit上传总带宽M/s",
       "defaultValue": "NET_BANDWIDTH"
     },
 
@@ -46,7 +46,7 @@
       "fieldName": "MODE",
       "fieldType": "Bool",
       "label": "MODE",
-      "helperText": "是否切换到备用速度(默认依据总带宽智能限速)",
+      "helperText": "是否切换到备用速度模式(默认依据总带宽智能限速)",
       "defaultValue": false
     }
 
