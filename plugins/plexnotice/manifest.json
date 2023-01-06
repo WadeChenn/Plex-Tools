@@ -7,6 +7,14 @@
   "requirements": [],
   "configField": [
     {
+      "fieldName": "uid",
+      "fieldType": "Enum",
+      "label": "推送用户",
+      "helperText": "选择接收推送的用户,用户管理要独立设置推送配置才生效",
+      "enumValuesRef": "UserList",
+      "multiValue": true
+    },
+    {
       "fieldName": "UseTMDB",
       "fieldType": "Bool",
       "label": "UseTMDB",

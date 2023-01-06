@@ -382,14 +382,14 @@ class TimelineHandler(object):
                 wxbodydst=wxbodydst.replace('\n\n','\n')
                 _LOGGER.info(wxtitledst)
                 _LOGGER.info(wxbodydst)
-
-                # 微信推送
-                self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
-                    'title': wxtitledst,
-                    'a': wxbodydst,
-                    'link_url': metadata.get('artUrl'),
-                    'pic_url': metadata.get('artUrl')
-                }, 1)
+                for uid in self.config.get('uid'):
+                    # 微信推送
+                    self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
+                        'title': wxtitledst,
+                        'a': wxbodydst,
+                        'link_url': metadata.get('artUrl'),
+                        'pic_url': metadata.get('artUrl')
+                    }, uid)
 
                 # plexpy.NOTIFY_QUEUE.put(data)
 
