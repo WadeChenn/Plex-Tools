@@ -5,7 +5,7 @@
   "description": "下载完成后，自动进行整理。",
   "version": "0.1",
   "requirements": [],
-  "config_field": [
+  "configField": [
     {
       "fieldName": "SortTitle",
       "fieldType": "Bool",
