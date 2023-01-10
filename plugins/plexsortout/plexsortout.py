@@ -251,10 +251,10 @@ class plexsortout:
 
         if video.genres:
 
-            if self.judgegenre(video.genres):
-                video.reload()
-                genres = video.genres
-                self.updategenre(video, genres)
+            # if self.judgegenre(video.genres):
+            video.reload()
+            genres = video.genres
+            self.updategenre(video, genres)
 
     def singleVideo(self, video):
         title = video.title
