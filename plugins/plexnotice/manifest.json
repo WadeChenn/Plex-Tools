@@ -96,8 +96,8 @@
       "fieldName": "Delay",
       "fieldType": "String",
       "label": "Delay",
-      "helperText": "入库通知延迟时间(单位秒,默认20秒)",
-      "defaultValue": "20"
+      "helperText": "入库通知延迟时间,这个时间内入库同一影片将会合并推送(单位秒,默认300秒)",
+      "defaultValue": "300"
     },
     {
       "fieldName": "AddTitle",
