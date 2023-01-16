@@ -389,7 +389,7 @@ class TimelineHandler(object):
                         'a': wxbodydst,
                         'link_url': metadata.get('artUrl'),
                         'pic_url': metadata.get('artUrl')
-                    }, uid)
+                    }, uid,to_channel_name=self.config.get('ToChannelName'))
 
                 # plexpy.NOTIFY_QUEUE.put(data)
 

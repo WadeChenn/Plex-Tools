@@ -583,7 +583,7 @@ class WatchStateUpdater:
                     'link_url': artUrl,
                     'pic_url': artUrl
 
-                }, uid)
+                }, uid,to_channel_name=self.config.get('ToChannelName'))
 
 
         except Exception as e:
@@ -603,6 +603,10 @@ class WatchStateUpdater:
 
 
 class plexnotice:
+    def __init__(self):
+        self._flag = False
+    def setflag(self,flag):
+        self._flag = flag
     def process(self, config):
         from mbot.openapi import mbot_api
         from mbot.openapi import media_server_manager
@@ -632,6 +636,8 @@ class plexnotice:
                 ws.listen()
                 _LOGGER.info(f'PlexNoticeStartListen!')
                 while True:
+                    if self._flag:
+                        break
                     time.sleep(1)
 
         except Exception as e:
