@@ -7,6 +7,13 @@
   "requirements": [],
   "configField": [
     {
+      "fieldName": "Added",
+      "fieldType": "Bool",
+      "label": "Added",
+      "helperText": "是否使用Plex入库事件作为触发运行,默认MR下载完成时运行",
+      "defaultValue": false
+    },
+    {
       "fieldName": "SortTitle",
       "fieldType": "Bool",
       "label": "SortTitle",
