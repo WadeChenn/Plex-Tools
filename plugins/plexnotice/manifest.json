@@ -18,7 +18,7 @@
       "fieldName": "ToChannelName",
       "fieldType": "String",
       "label": "推送通道名称",
-      "helperText": "选择想要推送的通道",
+      "helperText": "选择想要推送的通道,逗号间隔",
       "defaultValue": "ToChannelName"
     },
     {
