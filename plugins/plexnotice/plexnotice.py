@@ -576,7 +576,8 @@ class WatchStateUpdater:
             _LOGGER.info(wxtitledst)
             _LOGGER.info(wxbodydst)
             channel_table = self.config.get('ToChannelName').split(',')
-            if channel_table:
+            uid_table = self.config.get('uid')
+            if uid_table:  # 判断uid是否为空
                 for channel in channel_table:
                     for uid in self.config.get('uid'):
                         # 微信推送
@@ -587,7 +588,16 @@ class WatchStateUpdater:
                             'pic_url': artUrl
 
                         }, uid,to_channel_name=channel)
+            else:
+                for channel in channel_table:
+                    # 微信推送
+                    self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
+                        'title': wxtitledst,
+                        'a': wxbodydst,
+                        'link_url': artUrl,
+                        'pic_url': artUrl
 
+                    },to_channel_name=channel)
 
         except Exception as e:
             _LOGGER.error("{0} {1} 第{2}行".format(e,e.__traceback__.tb_frame.f_globals["__file__"],e.__traceback__.tb_lineno))

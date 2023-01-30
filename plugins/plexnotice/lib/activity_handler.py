@@ -383,7 +383,8 @@ class TimelineHandler(object):
                 _LOGGER.info(wxtitledst)
                 _LOGGER.info(wxbodydst)
                 channel_table = self.config.get('ToChannelName').split(',')
-                if channel_table:
+                uid_table = self.config.get('uid')
+                if uid_table: # 判断uid是否为空
                     for channel in channel_table:
                         for uid in self.config.get('uid'):
                             # 微信推送
@@ -394,6 +395,15 @@ class TimelineHandler(object):
                                 'pic_url': metadata.get('artUrl')
                             }, uid,to_channel_name=channel)
 
+                else:
+                    for channel in channel_table:
+                        # 微信推送
+                        self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
+                            'title': wxtitledst,
+                            'a': wxbodydst,
+                            'link_url': metadata.get('artUrl'),
+                            'pic_url': metadata.get('artUrl')
+                        },to_channel_name=channel)
                 # plexpy.NOTIFY_QUEUE.put(data)
 
             all_keys = [rating_key]
