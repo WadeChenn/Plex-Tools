@@ -7,6 +7,27 @@
   "requirements": [],
   "configField": [
     {
+      "fieldName": "Start",
+      "fieldType": "Bool",
+      "label": "Start",
+      "helperText": "是否启用播放通知",
+      "defaultValue": true
+    },
+        {
+      "fieldName": "Stop",
+      "fieldType": "Bool",
+      "label": "Stop",
+      "helperText": "是否启用停止通知",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Add",
+      "fieldType": "Bool",
+      "label": "Add",
+      "helperText": "是否启用入库通知",
+      "defaultValue": true
+    },
+    {
       "fieldName": "uid",
       "fieldType": "Enum",
       "label": "推送用户",

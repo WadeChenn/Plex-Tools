@@ -233,11 +233,11 @@ class WatchStateUpdater:
         media_key = payload["key"]
         position = payload["viewOffset"]
 
-        if session_id not in self.players:
+        if session_id not in self.players :
             self.players[session_id] = WebsocketPlayer(
                 session_id, state, media_key, position, self.plex
             )
-            _LOGGER.info("New session: %s", payload)
+            _LOGGER.debug("New session: %s", payload)
             temp = {
                 'title': self.config.get('PlayTitle'),
                 'body': self.config.get('Play')
@@ -245,10 +245,11 @@ class WatchStateUpdater:
             self.mrserver.event.publish_event('PlexPlayerEvent', {
                 'player': 'play'
             })
-            self.processmsg(payload, 'start', self.players[session_id], temp)
+            if  self.config.get('Start'):
+                self.processmsg(payload, 'start', self.players[session_id], temp)
             return True
 
-        if state == "stopped":
+        if state == "stopped"and self.config.get('Stop'):
             self.mrserver.event.publish_event('PlexPlayerEvent', {
                 'player': 'stopped'
             })
@@ -268,7 +269,7 @@ class WatchStateUpdater:
                 _LOGGER.info('播放时间过短,不进行通知')
 
             self.players.pop(session_id)
-            _LOGGER.info("Session ended: %s", payload)
+            _LOGGER.debug("Session ended: %s", payload)
             return True
 
         player = self.players[session_id]
@@ -281,7 +282,7 @@ class WatchStateUpdater:
                 self.mrserver.event.publish_event('PlexPlayerEvent', {
                     'player': 'changed'
                 })
-                _LOGGER.info("State/media changed: %s", payload)
+                _LOGGER.debug("State/media changed: %s", payload)
                 sessions = self.plex.sessions()
                 for session in sessions:
                     sk = session.sessionKey
@@ -295,6 +296,7 @@ class WatchStateUpdater:
                 # self.processmsg(payload,'start',self.players[session_id])
 
                 if state=='paused':
+
                     self.mrserver.event.publish_event('PlexPlayerEvent', {
                         'player': 'paused'
                     })
@@ -307,7 +309,7 @@ class WatchStateUpdater:
                 self.mrserver.event.publish_event('PlexPlayerEvent', {
                     'player': 'seek'
                 })
-                _LOGGER.info("Seek detected: %s", payload)
+                _LOGGER.debug("Seek detected: %s", payload)
                 should_fire = True
 
         player.state = state
@@ -327,8 +329,9 @@ class WatchStateUpdater:
     def on_activity(self, activity: ActivityNotification):
         global RECENTLY_ADDED_QUEUE
         global ACTIVITY_SCHED
-        timelineHandler = TimelineHandler(activity, self.plex,self.mrserver ,self.config,RECENTLY_ADDED_QUEUE,ACTIVITY_SCHED)
-        timelineHandler.process()
+        if self.config.get('Add'):
+            timelineHandler = TimelineHandler(activity, self.plex,self.mrserver ,self.config,RECENTLY_ADDED_QUEUE,ACTIVITY_SCHED)
+            timelineHandler.process()
 
         pass
 
@@ -580,6 +583,8 @@ class WatchStateUpdater:
             if uid_table:  # 判断uid是否为空
                 for channel in channel_table:
                     for uid in self.config.get('uid'):
+                        _LOGGER.info(uid+'发送到'+channel)
+
                         # 微信推送
                         self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
                             'title': wxtitledst,

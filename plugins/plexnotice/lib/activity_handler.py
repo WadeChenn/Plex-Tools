@@ -113,7 +113,7 @@ class TimelineHandler(object):
 
 
 
-                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s, grandparent %s) "
+                    _LOGGER.debug("MR TimelineHandler :: Library item '%s' (%s, grandparent %s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key), str(grandparent_rating_key)))
 
@@ -132,7 +132,7 @@ class TimelineHandler(object):
                     parent_set.add(rating_key)
                     self.RECENTLY_ADDED_QUEUE[parent_rating_key] = parent_set
                     #
-                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s , parent %s) "
+                    _LOGGER.debug("MR TimelineHandler :: Library item '%s' (%s , parent %s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key), str(parent_rating_key)))
                     # self.clear_recently_added_queue(parent_rating_key, title,self.config,self.plex)
@@ -148,7 +148,7 @@ class TimelineHandler(object):
                     queue_set = self.RECENTLY_ADDED_QUEUE.get(rating_key, set())
                     self.RECENTLY_ADDED_QUEUE[rating_key] = queue_set
 
-                    _LOGGER.info("MR TimelineHandler :: Library item '%s' (%s) "
+                    _LOGGER.debug("MR TimelineHandler :: Library item '%s' (%s) "
                                   "added to recently added queue."
                                   % (title, str(rating_key)))
                     # self.clear_recently_added_queue(rating_key, title,self.config,self.plex)
@@ -169,7 +169,7 @@ class TimelineHandler(object):
             # An item was deleted, make sure it is removed from the queue
             elif state_type == 9 and metadata_state == 'deleted':
                 if rating_key in self.RECENTLY_ADDED_QUEUE and not self.RECENTLY_ADDED_QUEUE[rating_key]:
-                    _LOGGER.info("MR TimelineHandler :: Library item %s "
+                    _LOGGER.debug("MR TimelineHandler :: Library item %s "
                                  "removed from recently added queue."
                                  % str(rating_key))
                     self.del_keys(rating_key)
@@ -413,7 +413,7 @@ class TimelineHandler(object):
             # for key in all_keys:
             #     data_factory.set_recently_added_item(key)
 
-            _LOGGER.info("Added %s items to the recently_added database table." % str(len(all_keys)))
+            _LOGGER.debug("Added %s items to the recently_added database table." % str(len(all_keys)))
 
         else:
             _LOGGER.error("MR TimelineHandler :: Unable to retrieve metadata for rating_key %s" % str(rating_key))
