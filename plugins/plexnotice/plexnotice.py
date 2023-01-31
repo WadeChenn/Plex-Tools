@@ -583,7 +583,7 @@ class WatchStateUpdater:
             if uid_table:  # 判断uid是否为空
                 for channel in channel_table:
                     for uid in self.config.get('uid'):
-                        _LOGGER.info(uid+'发送到'+channel)
+                        _LOGGER.info(f'uid:{uid} 发送到通道:{channel}')
 
                         # 微信推送
                         self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
