@@ -206,9 +206,7 @@ class plexsortout:
                     break
             _LOGGER.info(video.title)
     def process_sorttitle(self,video):
-        selftag=self.config.get('SelfGenres').split(',')
-        for tag in selftag:
-            tags[tag.split(':')[0]]=tag.split(':')[1]
+
 
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
@@ -249,6 +247,10 @@ class plexsortout:
                 chlist.append("豆瓣TOP 250")
                 video.addGenre(chlist, locked=True)
     def process_tag(self,video):
+        selftag=self.config.get('SelfGenres').split(',')
+        for tag in selftag:
+            tags[tag.split(':')[0]]=tag.split(':')[1]
+
         title = video.title
         if self.config.get('Top250'):
             self.add_top250(video)
