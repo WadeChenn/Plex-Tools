@@ -206,6 +206,10 @@ class plexsortout:
                     break
             _LOGGER.info(video.title)
     def process_sorttitle(self,video):
+        selftag=self.config.get('SelfGenres').split(',')
+        for tag in selftag:
+            tags[tag.split(':')[0]]=tag.split(':')[1]
+
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
         if video.titleSort:  # 判断是否已经有标题
