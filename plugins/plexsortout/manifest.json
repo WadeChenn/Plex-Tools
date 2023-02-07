@@ -32,7 +32,7 @@
       "fieldType": "String",
       "label": "SelfGenres",
       "helperText": "自定义标签映射例,原标签1:新标签1,原标签2:新标签2",
-      "defaultValue": "SelfGenres"
+      "defaultValue": "SelfGenres:SelfGenres"
     },
     {
       "fieldName": "Top250",
