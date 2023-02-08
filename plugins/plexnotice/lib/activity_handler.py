@@ -384,26 +384,43 @@ class TimelineHandler(object):
                 _LOGGER.info(wxbodydst)
                 channel_table = self.config.get('ToChannelName').split(',')
                 uid_table = self.config.get('uid')
-                if uid_table: # 判断uid是否为空
-                    for channel in channel_table:
-                        for uid in self.config.get('uid'):
+                # videos = self.plex.library.recentlyAdded(libtype=None)
+                # self.plex.library.recentlyAddedEpisodes(maxresults=50)
+                notify_video=False
+                lib = plex.library.section(metadata.get('library'))
+                if metadata.get("type") in {'season','episode'}:
+                    videos = lib.recentlyAddedEpisodes(maxresults=25)
+                    if metadata.get("type") == 'episode':
+                        for video in videos:
+                            if video.grandparentTitle ==metadata.get("source_title"):
+                                notify_video = True
+                    if metadata.get("type") == 'season':
+                        for video in videos:
+                            if video.parentTitle ==metadata.get("source_title"):
+                                notify_video = True
+
+                # Episodes=plex.library.recentlyAddedEpisodes(maxresults=50)
+                if notify_video:
+                    if uid_table: # 判断uid是否为空
+                        for channel in channel_table:
+                            for uid in self.config.get('uid'):
+                                # 微信推送
+                                self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
+                                    'title': wxtitledst,
+                                    'a': wxbodydst,
+                                    'link_url': metadata.get('artUrl'),
+                                    'pic_url': metadata.get('artUrl')
+                                }, uid,to_channel_name=channel)
+
+                    else:
+                        for channel in channel_table:
                             # 微信推送
                             self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
                                 'title': wxtitledst,
                                 'a': wxbodydst,
                                 'link_url': metadata.get('artUrl'),
                                 'pic_url': metadata.get('artUrl')
-                            }, uid,to_channel_name=channel)
-
-                else:
-                    for channel in channel_table:
-                        # 微信推送
-                        self.mrserver.notify.send_message_by_tmpl('{{title}}', '{{a}}', {
-                            'title': wxtitledst,
-                            'a': wxbodydst,
-                            'link_url': metadata.get('artUrl'),
-                            'pic_url': metadata.get('artUrl')
-                        },to_channel_name=channel)
+                            },to_channel_name=channel)
                 # plexpy.NOTIFY_QUEUE.put(data)
 
             all_keys = [rating_key]
@@ -436,23 +453,29 @@ class TimelineHandler(object):
         media_type = MediaType.Movie
         section=video
         if video[0].type=='season':
+            metadata['source_title']=video[0].parentTitle
+
             metadata['full_title']='{} {}'.format(video[0].parentTitle,video[0].title)
             metadata['summary'] = video[0].summary
             metadata['index'] = video[0].index
             section = plex.library.search(id=video[0].parentRatingKey)
             media_type = MediaType.TV
         if video[0].type=='movie':
+            metadata['source_title']=video[0].title
+
             metadata['full_title']='{}'.format(video[0].title)
             metadata['summary'] = video[0].summary
             media_type = MediaType.Movie
 
         if video[0].type=='show':
+            metadata['source_title']=video[0].title
             metadata['full_title']='{}'.format(video[0].title)
             # metadata['seasonNumber'] = video[0].seasonNumber
             metadata['index'] = video[0].index
             metadata['summary'] = video[0].summary
             media_type = MediaType.TV
         if video[0].type == 'episode':
+            metadata['source_title']=video[0].grandparentTitle
             metadata['full_title'] = '{} {}'.format(video[0].grandparentTitle, video[0].seasonEpisode.upper().replace('E', '·E'))
             metadata['subTitle'] = '\n单集标题:'+video[0].title
             metadata['episodeNumber'] = video[0].episodeNumber

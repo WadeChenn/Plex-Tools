@@ -36,7 +36,7 @@ def on_event(ctx: PluginContext, event_type: str, data: Dict):
     触发绑定的事件后调用此函数
     函数接收参数固定。第一个为插件上下文信息，第二个事件类型，第三个事件携带的数据
     """
-    _LOGGER.info('接收到 PlexActivityEvent 事件')
+    _LOGGER.info('接收到 PlexActivityEvent 事件.开始整理')
     if data.get('Activity') == 'Added' and data.get('Added'):
         plexst.process()
     # plexst.send_by_event(event_type, data)
@@ -47,6 +47,7 @@ def on_event(ctx: PluginContext, event_type: str, data: Dict):
     触发绑定的事件后调用此函数
     函数接收参数固定。第一个为插件上下文信息，第二个事件类型，第三个事件携带的数据
     """
+    _LOGGER.info('接收到 DownloadCompleted 事件.开始整理')
     if not data.get('Added'):
         plexst.process()
     # plexst.send_by_event(event_type, data)
