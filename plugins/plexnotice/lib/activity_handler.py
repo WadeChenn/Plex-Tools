@@ -296,6 +296,12 @@ class TimelineHandler(object):
             'Activity': 'Added'
         })
         metadata = self.get_metadata_details(plex,rating_key)
+        lbl = self.config.get('LibBlackList').split(',')
+        library_ = metadata.get('library')
+        if library_ in lbl:
+            _LOGGER.info('{0}库处于黑名单不进行通知'.format(library_))
+            return
+
         _LOGGER.debug("MR  TimelineHandler :: Library item '%s' (%s) added to Plex.",
                      metadata['full_title'], str(rating_key))
 
@@ -398,7 +404,11 @@ class TimelineHandler(object):
                         for video in videos:
                             if video.parentTitle ==metadata.get("source_title"):
                                 notify_video = True
-
+                if metadata.get("type") in {'movie','show'}:
+                    videos = lib.recentlyAdded(maxresults=25)
+                    for video in videos:
+                        if video.title ==metadata.get("source_title"):
+                            notify_video = True
                 # Episodes=plex.library.recentlyAddedEpisodes(maxresults=50)
                 if notify_video:
                     if uid_table: # 判断uid是否为空
