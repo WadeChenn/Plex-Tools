@@ -40,7 +40,7 @@ def on_event(ctx: PluginContext, event_type: str, data: Dict):
         plexst.process()
     # plexst.send_by_event(event_type, data)
 @plugin.on_event(
-    bind_event=['EventType.DownloadCompleted'], order=1)
+    bind_event=[EventType.DownloadCompleted], order=1)
 def on_event(ctx: PluginContext, event_type: str, data: Dict):
     """
     触发绑定的事件后调用此函数
