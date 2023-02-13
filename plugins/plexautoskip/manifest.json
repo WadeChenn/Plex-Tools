@@ -1,0 +1,34 @@
+{
+  "name": "plexautoskip",
+  "title": "Plex自动控制",
+  "author": "BeiMou(yewei)",
+  "description": "自动跳过片头片尾。",
+  "version": "0.1",
+  "requirements": [],
+  "configField": [
+    {
+      "fieldName": "Intro",
+      "fieldType": "Bool",
+      "label": "Intro",
+      "helperText": "是否跳过片头",
+      "defaultValue": false
+    },
+    {
+      "fieldName": "Outro",
+      "fieldType": "Bool",
+      "label": "Outro",
+      "helperText": "是否跳过片尾",
+      "defaultValue": true
+    },
+    {
+      "fieldName": "Advertisements",
+      "fieldType": "Bool",
+      "label": "Advertisements",
+      "helperText": "是否跳过广告",
+      "defaultValue": true
+    }
+  ],
+  "logoUrl":"/plugins/plexsortout/logo.jpg",
+  "githubUrl": "https://github.com/WadeChenn/Plex-Tools/tree/main/Plex-SortTittle/MR-Plugins",
+  "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools"
+}
