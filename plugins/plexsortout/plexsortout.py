@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 
 import pypinyin
 import re
-
+plugins_name = '「PLEX 工具箱」'
 IMDBTop250 = {'肖申克的救赎', '教父', '教父2', '蝙蝠侠：黑暗骑士', '十二怒汉', '辛德勒的名单', '指环王3：国王归来',
               '低俗小说', '黄金三镖客', '指环王1：魔戒现身', '搏击俱乐部', '阿甘正传', '盗梦空间', '指环王2：双塔奇兵',
               '星球大战2：帝国反击战', '黑客帝国', '好家伙', '飞越疯人院', '七武士', '七宗罪', '美丽人生', '上帝之城',
@@ -185,7 +185,8 @@ class plexsortout:
         libtable = []
         lib = {}
         for section in self.plexserver.library.sections():
-            _LOGGER.info(section.title)
+            #输出所有媒体库
+            _LOGGER.info(f'{section.title}')
             lib['name']=section.title
             lib['value']=section.title
             libtable.append(lib.copy())
@@ -204,10 +205,8 @@ class plexsortout:
                 if poster.provider == 'fanarttv':
                     video.setPoster(poster)
                     break
-            _LOGGER.info(video.title)
+            # _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
     def process_sorttitle(self,video):
-
-
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
         if video.titleSort:  # 判断是否已经有标题
@@ -217,10 +216,9 @@ class plexsortout:
                 SortTitle = self.removePunctuation(SortTitle)
                 try:
                     video.editSortTitle(SortTitle)
-                    _LOGGER.info(f'首字母排序完成 {video.titleSort}')
+                    _LOGGER.info(f'「{title}」首字母排序完成「{video.titleSort}」\n')
                 except Exception as e:
-                    print(e)
-                    print("Edit SortTitle error")
+                    _LOGGER.error(f"「{title}」Edit SortTitle error,原因：{e}")
     def add_top250(self,video):
         title = video.title
         for name in IMDBTop250:
@@ -299,8 +297,7 @@ class plexsortout:
                     try:
                         video.editSortTitle(SortTitle)
                     except Exception as e:
-                        print(e)
-                        print("Edit SortTitle error")
+                        _LOGGER.error(f"{plugins_name}Edit SortTitle error,原因：{e}")
                 #     continue
                 # continue
 
@@ -342,7 +339,7 @@ class plexsortout:
         if 1:
             libtable=library
             for i in range(len(libtable)):
-                _LOGGER.info(libtable[i])
+                _LOGGER.info(f'{plugins_name}现在开始处理媒体库「{libtable[i]}」')
                 videos = self.plexserver.library.section(libtable[i])
                 #处理collection
                 if self.config.get('collection'):
@@ -352,26 +349,26 @@ class plexsortout:
                 #处理视频
                 video_len=len(videos.all())
                 for video,i in zip(videos.all(),range(video_len)):
-                    _LOGGER.info(video.title)
+                    _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
                     #fanart筛选
                     if self.config.get('Poster'):
                         self.process_fanart(video)
-                        _LOGGER.info('Fanart筛选完成')
+                        _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
                     #标签翻译整理
                     if self.config.get('Genres'):
                         self.process_tag(video)
-                        _LOGGER.info(f"标签翻译整理完成\n {video.genres}")
+                        _LOGGER.info(f"「{video.title}」标签翻译整理完成「{video.genres}」")
                     #首字母排序
                     if self.config.get('SortTitle'):
                         self.process_sorttitle(video)
 
-            _LOGGER.info("\n排序成功!")
+            _LOGGER.info(f"{plugins_name}处理完成!")
         else:
-            _LOGGER.error('仅支持配置了Plex媒体库的用户使用')
+            _LOGGER.error(f'{plugins_name}仅支持配置了 PLEX 媒体库的用户使用')
     def process(self):
         if 1:
             videos = self.plexserver.library.recentlyAdded()
-            print("开始处理近10个添加的媒体 ")
+            _LOGGER.info(f"{plugins_name}开始处理近10个添加的媒体")
 
             videoNum = 0
             for video in videos:
@@ -391,14 +388,14 @@ class plexsortout:
 
                 if self.config.get('Poster'):
                     self.process_fanart(editvideo)
-                    _LOGGER.info('Fanart筛选完成')
+                    _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
                 # 标签翻译整理
                 if self.config.get('Genres'):
                     self.process_tag(editvideo)
-                    _LOGGER.info(f"标签翻译整理完成\n {editvideo.genres}")
+                    _LOGGER.info(f"「{video.title}」标签翻译整理完成 {editvideo.genres}")
                 # 首字母排序
                 if self.config.get('SortTitle'):
                     self.process_sorttitle(editvideo)
-            _LOGGER.info(f'[Plex Sort Out] Success!')
+            _LOGGER.info(f'{plugins_name}美化完成')
         else:
-            _LOGGER.info(f'[Plex Sort Out] [None Plex Server] Fail!')
+            _LOGGER.info(f'{plugins_name}美化失败 [None Plex Server]')
