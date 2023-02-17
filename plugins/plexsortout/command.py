@@ -7,14 +7,14 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-
+plugins_name = '「PLEX 工具箱」'
 
 def get_enum_data():
     """
     返回一个包含name和value的枚举数据，在前端页面会呈现为下拉列表框；
     value就是你最终你能接收到的变量值
     """
-    _LOGGER.info('开始获取媒体库')
+    _LOGGER.info(f'{plugins_name}开始获取媒体库')
     libtable=plexst.get_library()
     return libtable
 
