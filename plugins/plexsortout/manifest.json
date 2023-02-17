@@ -3,68 +3,71 @@
   "title": "Plex工具箱",
   "author": "BeiMou(yewei)",
   "description": "下载完成后，自动进行整理。",
-  "version": "0.1",
-  "requirements": [],
+  "version": "1.1",
+  "requirements": null,
   "configField": [
     {
       "fieldName": "Added",
       "fieldType": "Bool",
-      "label": "Added",
-      "helperText": "是否使用Plex入库事件作为触发运行,默认MR下载完成时运行",
+      "label": "使用Plex入库事件作为触发运行,默认MR下载完成时运行",
+      "helperText": "",
       "defaultValue": false
     },
     {
       "fieldName": "SortTitle",
       "fieldType": "Bool",
-      "label": "SortTitle",
-      "helperText": "是否整理首字母",
+      "label": "整理首字母",
+      "helperText": "",
       "defaultValue": true
     },
     {
       "fieldName": "Genres",
       "fieldType": "Bool",
-      "label": "Genres",
-      "helperText": "是否整理标签",
+      "label": "整理标签",
+      "helperText": "",
       "defaultValue": true
     },
     {
       "fieldName": "SelfGenres",
       "fieldType": "String",
-      "label": "SelfGenres",
-      "helperText": "自定义标签映射例,原标签1:新标签1,原标签2:新标签2",
+      "label": "自定义标签映射例,原标签1:新标签1,原标签2:新标签2",
+      "helperText": "",
       "defaultValue": "SelfGenres:SelfGenres"
     },
     {
       "fieldName": "Top250",
       "fieldType": "Bool",
-      "label": "Top250",
-      "helperText": "是否添加榜单标签",
+      "label": "添加 Top250 榜单标签",
+      "helperText": "",
       "defaultValue": true
     },
     {
       "fieldName": "Collection",
       "fieldType": "Bool",
-      "label": "Collection",
-      "helperText": "是否整理合集",
+      "label": "整理合集",
+      "helperText": "",
       "defaultValue": true
     },
     {
       "fieldName": "Poster",
       "fieldType": "Bool",
-      "label": "Poster",
-      "helperText": "是否筛选海报",
+      "label": "筛选 Fanart 精美海报",
+      "helperText": "",
       "defaultValue": true
     },
     {
       "fieldName": "LIBRARY",
       "fieldType": "String",
-      "label": "LIBRARY",
-      "helperText": "要处理的媒体库名称(默认全库)逗号间隔",
+      "label": "要处理的媒体库名称（默认全库：ALL）,英文逗号','间隔",
+      "helperText": "",
       "defaultValue": "ALL"
     }
-
   ],
-  "logoUrl":"/plugins/plexsortout/logo.jpg",
+  "logoUrl": "/plugins/plexsortout/logo.jpg",
   "githubUrl": "https://github.com/WadeChenn/Plex-Tools/tree/main/Plex-SortTittle/MR-Plugins",
-  "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools"
+  "helpDocUrl": "https://github.com/WadeChenn/Plex-Tools",
+  "payImageUrl": "https://p.xmoviebot.com/donate/yewei_wechat.jpg",
+  "dependencies": {
+    "appVersion": ">=1.9.16"
+  }
 }
