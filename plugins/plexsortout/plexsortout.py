@@ -357,7 +357,7 @@ class plexsortout:
                     #标签翻译整理
                     if self.config.get('Genres'):
                         self.process_tag(video)
-                        _LOGGER.info(f"「{video.title}」标签翻译整理完成「{video.genres}」")
+                        _LOGGER.info(f"「{video.title}」标签翻译整理完成 {video.genres}")
                     #首字母排序
                     if self.config.get('SortTitle'):
                         self.process_sorttitle(video)
