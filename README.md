@@ -1,5 +1,6 @@
 # Plex工具集
-## 新添加movie-bot插件脚本,在每个工具的MR-Plugins文件下下 无需任何配置 将文件夹📁复制到movie-bot对应插件文件夹下即可
+## 新添加 movie-bot 插件脚本,在每个工具的 `MR-Plugins` 文件下下
+## 无需任何配置 将文件夹 📁 复制到 movie-bot 对应插件文件夹下即可
 打勾为已完成插件
 - [x] PlexSortOut 整理脚本标签+拼音排序
 - [ ] qbit脚本
