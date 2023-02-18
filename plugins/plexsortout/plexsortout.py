@@ -147,7 +147,8 @@ class plexsortout:
                 return True
         return False
 
-    def chinese2pinyin(self, chinesestr):  # chinese to pyinyin
+    # chinese to pyinyin
+    def chinese2pinyin(self, chinesestr):  
         pyinyin_list = []
         pinyin = pypinyin.pinyin(chinesestr, style=pypinyin.FIRST_LETTER, heteronym=True)
         for i in range(len(pinyin)):
@@ -155,8 +156,8 @@ class plexsortout:
         pyinyin_str = ''.join(pyinyin_list)
         return pyinyin_str
 
+    # 去除标点符号（只留字母、数字、中文)
     def removePunctuation(self, query):
-        # 去除标点符号（只留字母、数字、中文)
         if query:
             rule = re.compile(u"[^a-zA-Z0-9]")
             query = rule.sub('', query)
@@ -167,6 +168,7 @@ class plexsortout:
             if enggenre in tags.keys():
                 return True
         return False
+
     def updategenre(self, video, genres):
         englist = []
         chlist = []
@@ -181,6 +183,8 @@ class plexsortout:
             video.removeGenre(englist, locked=True)
         else:
             video.addGenre(chlist, locked=True)
+
+    #获取 PLEX 服务器所有媒体库
     def get_library(self):
         libtable = []
         lib = {}
@@ -191,6 +195,8 @@ class plexsortout:
             lib['value']=section.title
             libtable.append(lib.copy())
         return libtable
+
+    # 筛选fanart封面
     def process_fanart(self,video):
         TypeDic={
             'show':MediaType.TV,
@@ -206,6 +212,8 @@ class plexsortout:
                     video.setPoster(poster)
                     break
             # _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
+
+    # 排序修改为首字母
     def process_sorttitle(self,video):
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
@@ -219,6 +227,7 @@ class plexsortout:
                     _LOGGER.info(f'「{title}」排序已修改为首字母「 {SortTitle} 」\n')
                 except Exception as e:
                     _LOGGER.error(f"「{title}」Edit SortTitle error,原因：{e}")
+
     def add_top250(self,video):
         title = video.title
         for name in IMDBTop250:
@@ -244,6 +253,7 @@ class plexsortout:
                 chlist = []
                 chlist.append("豆瓣TOP 250")
                 video.addGenre(chlist, locked=True)
+
     def process_tag(self,video):
         selftag=self.config.get('SelfGenres').split(',')
         for tag in selftag:
@@ -265,8 +275,6 @@ class plexsortout:
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
         if self.config.get('Top250'):
             self.add_top250(video)
-
-
         if video.genres:
             video.reload()
             genres = video.genres
@@ -334,7 +342,8 @@ class plexsortout:
                 video.reload()
                 genres = video.genres
                 self.updategenre(video, genres)
-
+    
+    # 手动选择媒体库整理
     def process_all(self,library):
         if 1:
             libtable=library
@@ -363,41 +372,41 @@ class plexsortout:
                     if self.config.get('SortTitle'):
                         self.process_sorttitle(video)
 
-            _LOGGER.info(f"{plugins_name}处理完成!")
+            _LOGGER.info(f"{plugins_name}手动运行整理完成!")
         else:
             _LOGGER.error(f'{plugins_name}仅支持配置了 PLEX 媒体库的用户使用')
+
+    # 处理最近10条新添加媒体
     def process(self):
-        if 1:
-            videos = self.plexserver.library.recentlyAdded()
+        # if 1:
+        videos = self.plexserver.library.recentlyAdded()
+        _LOGGER.info(f"{plugins_name}开始处理近10个添加的媒体")
+        videoNum = 0
+        for video in videos:
+            videoNum = videoNum + 1
+            if videoNum > 10:
+                break
+            if video.type == "season":
+                parentkey = video.parentRatingKey
+                tvshows = self.plexserver.library.search(id=parentkey)
+                # plex.library.
+                print(tvshows[0].title)
+                #标签翻译整理
+                editvideo=tvshows[0]
+            else:
+                print(video.title)
+                editvideo=video
 
-            _LOGGER.info(f"{plugins_name}开始处理近10个添加的媒体")
-
-            videoNum = 0
-            for video in videos:
-                videoNum = videoNum + 1
-                if videoNum > 10:
-                    break
-                if video.type == "season":
-                    parentkey = video.parentRatingKey
-                    tvshows = self.plexserver.library.search(id=parentkey)
-                    # plex.library.
-                    print(tvshows[0].title)
-                    #标签翻译整理
-                    editvideo=tvshows[0]
-                else:
-                    print(video.title)
-                    editvideo=video
-
-                if self.config.get('Poster'):
-                    self.process_fanart(editvideo)
-                    _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
-                # 标签翻译整理
-                if self.config.get('Genres'):
-                    self.process_tag(editvideo)
-                    _LOGGER.info(f"「{video.title}」标签翻译整理完成 {editvideo.genres}")
-                # 首字母排序
-                if self.config.get('SortTitle'):
-                    self.process_sorttitle(editvideo)
-            _LOGGER.info(f'{plugins_name}美化完成')
-        else:
-            _LOGGER.info(f'{plugins_name}美化失败 [None Plex Server]')
+            if self.config.get('Poster'):
+                self.process_fanart(editvideo)
+                _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
+            # 标签翻译整理
+            if self.config.get('Genres'):
+                self.process_tag(editvideo)
+                _LOGGER.info(f"「{video.title}」标签翻译整理完成 {editvideo.genres}")
+            # 首字母排序
+            if self.config.get('SortTitle'):
+                self.process_sorttitle(editvideo)
+        _LOGGER.info(f'{plugins_name}自动运行完成')
+        # else:
+        #     _LOGGER.info(f'{plugins_name}自动运行失败 [None Plex Server]')
