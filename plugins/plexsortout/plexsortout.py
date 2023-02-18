@@ -354,7 +354,7 @@ class plexsortout:
                 if self.config.get('Collection'):
                     collections=videos.collections()
                     for collection in collections:
-                        _LOGGER.info(f'{plugins_name}开始处理合集{collection}')
+                        _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
                         self.process_sorttitle(collection)
                 #处理视频
                 video_len=len(videos.all())
@@ -367,7 +367,13 @@ class plexsortout:
                     #标签翻译整理
                     if self.config.get('Genres'):
                         self.process_tag(video)
-                        _LOGGER.info(f"「{video.title}」标签翻译整理完成 {video.genres}")
+                        if video.genres:
+                            genre_names = [genre.tag.lower() for genre in video.genres]
+                            genre_names = [name.split(':')[-1] for name in genre_names]
+                            # _LOGGER.info(f"「{video.title}」标签翻译整理完成 {video.genres}")
+                            _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
+                        else:
+                            _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
                     #首字母排序
                     if self.config.get('SortTitle'):
                         self.process_sorttitle(video)
