@@ -216,7 +216,7 @@ class plexsortout:
                 SortTitle = self.removePunctuation(SortTitle)
                 try:
                     video.editSortTitle(SortTitle)
-                    _LOGGER.info(f'「{title}」首字母排序完成「{video.titleSort}」\n')
+                    _LOGGER.info(f'「{title}」排序已修改为首字母「 {SortTitle} 」\n')
                 except Exception as e:
                     _LOGGER.error(f"「{title}」Edit SortTitle error,原因：{e}")
     def add_top250(self,video):
@@ -342,9 +342,10 @@ class plexsortout:
                 _LOGGER.info(f'{plugins_name}现在开始处理媒体库「{libtable[i]}」')
                 videos = self.plexserver.library.section(libtable[i])
                 #处理collection
-                if self.config.get('collection'):
+                if self.config.get('Collection'):
                     collections=videos.collections()
                     for collection in collections:
+                        _LOGGER.info(f'{plugins_name}开始处理合集{collection}')
                         self.process_sorttitle(collection)
                 #处理视频
                 video_len=len(videos.all())
@@ -368,6 +369,7 @@ class plexsortout:
     def process(self):
         if 1:
             videos = self.plexserver.library.recentlyAdded()
+
             _LOGGER.info(f"{plugins_name}开始处理近10个添加的媒体")
 
             videoNum = 0
