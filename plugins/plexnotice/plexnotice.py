@@ -296,11 +296,12 @@ class WatchStateUpdater:
                 # self.processmsg(payload,'start',self.players[session_id])
 
                 if state=='paused':
-
+                    temp = ''
                     self.mrserver.event.publish_event('PlexPlayerEvent', {
                         'player': 'paused'
                     })
-                    self.processmsg(payload,'paused')
+                    self.processmsg(payload, 'paused', self.players[session_id], temp)
+                    
                 should_fire = True
             elif state == "playing" and player.significant_position_change(
                     now, position
@@ -660,6 +661,3 @@ class plexnotice:
 
         except Exception as e:
             _LOGGER.error("{0} {1} 第{2}行".format(e,e.__traceback__.tb_frame.f_globals["__file__"],e.__traceback__.tb_lineno))
-
-
-
