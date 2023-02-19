@@ -386,7 +386,7 @@ class plexsortout:
     def process(self):
         # if 1:
         videos = self.plexserver.library.recentlyAdded()
-        _LOGGER.info(f"{plugins_name}开始处理近10个添加的媒体")
+        _LOGGER.info(f"{plugins_name}开始整理最近添加的 10 个媒体")
         videoNum = 0
         for video in videos:
             videoNum = videoNum + 1
