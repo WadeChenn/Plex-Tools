@@ -409,7 +409,12 @@ class plexsortout:
             # 标签翻译整理
             if self.config.get('Genres'):
                 self.process_tag(editvideo)
-                _LOGGER.info(f"「{video.title}」标签翻译整理完成 {editvideo.genres}")
+                if editvideo.genres:
+                    genre_names = [genre.tag.lower() for genre in editvideo.genres]
+                    genre_names = [name.split(':')[-1] for name in genre_names]
+                    _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
+                else:
+                    _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
             # 首字母排序
             if self.config.get('SortTitle'):
                 self.process_sorttitle(editvideo)
