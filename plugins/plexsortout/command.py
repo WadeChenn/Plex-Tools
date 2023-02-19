@@ -27,9 +27,9 @@ def select_data(ctx: PluginCommandContext,
     user_list = list(filter(lambda x: x.role == 1, mbot_api.user.list()))
     if user_list:
         for user in user_list:
-            mbot_api.notify.send_system_message(user.uid, 'Plex媒体库整理',
-                                                '自动翻译标签&&拼音排序&&添加TOP250标签完毕')
-    return PluginCommandResponse(True, f'Plex整理完成')
+            mbot_api.notify.send_system_message(user.uid, '手动运行 Plex 媒体库整理',
+                                                '翻译标签 && 拼音排序 && 添加TOP250标签完毕')
+    return PluginCommandResponse(True, f'手动运行 Plex 媒体库整理完成')
 
 
 # @plugin.command(name='plexcollection', title='Plex整理合集首字母', desc='自动整理合集首字母', icon='HourglassFull',run_in_background=True)
