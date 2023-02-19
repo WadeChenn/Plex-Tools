@@ -16,9 +16,9 @@ def after_setup(plugin: PluginMeta, plugin_conf: dict):
     global added, libtable
     added = plugin_conf.get('Added') if plugin_conf.get('Added') else None
     if added:
-        _LOGGER.info(f'{plugins_name} 使用「PLEX入库事件」作为触发运行')
+        _LOGGER.info(f'{plugins_name}使用「PLEX入库事件」作为触发运行')
     else:
-        _LOGGER.info(f'{plugins_name} 使用「MR 下载完成事件」作为触发运行')
+        _LOGGER.info(f'{plugins_name}使用「MR 下载完成事件」作为触发运行')
     libstr = plugin_conf.get('LIBRARY')
     if libstr:
         libtable=libstr.split(',')
@@ -40,9 +40,9 @@ def config_changed(plugin_conf: dict):
     global added, libtable
     added = plugin_conf.get('Added') if plugin_conf.get('Added') else None
     if added:
-        _LOGGER.info(f'{plugins_name} 使用「PLEX入库事件」作为触发运行')
+        _LOGGER.info(f'{plugins_name}使用「PLEX入库事件」作为触发运行')
     else:
-        _LOGGER.info(f'{plugins_name} 使用「MR 下载完成事件」作为触发运行')
+        _LOGGER.info(f'{plugins_name}使用「MR 下载完成事件」作为触发运行')
     libstr = plugin_conf.get('LIBRARY')
     if libstr:
         libtable=libstr.split(',')
