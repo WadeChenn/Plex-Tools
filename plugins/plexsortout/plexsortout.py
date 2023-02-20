@@ -375,7 +375,7 @@ class plexsortout:
                 else:
                     _LOGGER.info(f'「{libtable[i]}」库将整理最新的 {video_num} 部影片')
             else:
-                _LOGGER.info(f"「{libtable[i]}」库设置整理数量为['{sortoutNum}'], 将整理库中所有影片")
+                _LOGGER.info(f"「{libtable[i]}」库设置整理数量为['{sortoutNum}'], 将整理库中所有影片，共 {video_len} 部影片")
                 video_num = video_len
             for video,i in zip(videos,range(video_num)):
                 _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
