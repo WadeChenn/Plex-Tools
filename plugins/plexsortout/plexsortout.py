@@ -382,42 +382,63 @@ class plexsortout:
         else:
             _LOGGER.error(f'{plugins_name}仅支持配置了 PLEX 媒体库的用户使用')
 
-    # 处理最近10条新添加媒体
+    # 整理指定库最近新添加项
     def process(self):
-        # if 1:
-        videos = self.plexserver.library.recentlyAdded()
-        _LOGGER.info(f"{plugins_name}开始整理最近添加的 10 个媒体")
-        videoNum = 0
-        for video in videos:
-            videoNum = videoNum + 1
-            if videoNum > 10:
-                break
-            if video.type == "season":
-                parentkey = video.parentRatingKey
-                tvshows = self.plexserver.library.search(id=parentkey)
-                # plex.library.
-                print(tvshows[0].title)
-                #标签翻译整理
-                editvideo=tvshows[0]
-            else:
-                print(video.title)
-                editvideo=video
+        sortout_num = 6
+        # 指定要获取最近添加项的库
+        if self.config.get('LIBRARY') == 'ALL' or not self.config.get('LIBRARY'):
+            recently_added = self.plexserver.library.recentlyAdded()
+            _LOGGER.info(f"{plugins_name}未指定库，将整理全库中的最近 {sortout_num} 项")
+            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added}")
+        else:
+            library_names=self.config.get('LIBRARY').split(',')
+            _LOGGER.info(f"{plugins_name}指定库为：{library_names}")
+            _LOGGER.info(f"{plugins_name}开始整理指定库中最近添加的 {sortout_num} 个媒体")
+            # 获取所有指定库中最近添加的 sortout_num 项
+            recently_added = []
+            for library_name in library_names:
+                library = self.plexserver.library.section(library_name)
+                library_recently_added = library.recentlyAdded()[:sortout_num]
+                if len(library_recently_added) > 0:
+                    recently_added.extend(library_recently_added)
+            # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项：{recently_added}")
 
-            if self.config.get('Poster'):
-                self.process_fanart(editvideo)
-                _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
-            # 标签翻译整理
-            if self.config.get('Genres'):
-                self.process_tag(editvideo)
-                if editvideo.genres:
-                    genre_names = [genre.tag.lower() for genre in editvideo.genres]
-                    genre_names = [name.split(':')[-1] for name in genre_names]
-                    _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
+        
+
+        for videoNum, video in enumerate(recently_added):
+            if videoNum > sortout_num - 1:
+                break
+            if video:
+                _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
+                if video.type == "season":
+                    parentkey = video.parentRatingKey
+                    tvshows = self.plexserver.library.search(id=parentkey)
+                    # plex.library.
+                    print(tvshows[0].title)
+                    #标签翻译整理
+                    editvideo=tvshows[0]
                 else:
-                    _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
-            # 首字母排序
-            if self.config.get('SortTitle'):
-                self.process_sorttitle(editvideo)
+                    print(video.title)
+                    editvideo=video
+
+                if self.config.get('Poster'):
+                    self.process_fanart(editvideo)
+                    _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
+                # 标签翻译整理
+                if self.config.get('Genres'):
+                    self.process_tag(editvideo)
+                    if editvideo.genres:
+                        genre_names = [genre.tag.lower() for genre in editvideo.genres]
+                        genre_names = [name.split(':')[-1] for name in genre_names]
+                        _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
+                    else:
+                        _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
+                # 首字母排序
+                if self.config.get('SortTitle'):
+                    self.process_sorttitle(editvideo)
+            else:
+                print(f"{videoNum+1}. (no item found)")
+
         _LOGGER.info(f'{plugins_name}自动运行完成')
         # else:
         #     _LOGGER.info(f'{plugins_name}自动运行失败 [None Plex Server]')
