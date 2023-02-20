@@ -355,7 +355,11 @@ class plexsortout:
                     collections=videos.collections()
                     for collection in collections:
                         _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
-                        self.process_sorttitle(collection)
+                        # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
+                        if collection.titleSort != collection.title:
+                            _LOGGER.info(f"「{collection.title}」合集的标题排序已锁定或手动调整过，不进行翻译替换\n")
+                        else:
+                            self.process_sorttitle(collection)
                 #处理视频
                 video_len=len(videos.all())
                 for video,i in zip(videos.all(),range(video_len)):
@@ -412,20 +416,23 @@ class plexsortout:
             # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 个合集，未排序前：\n{recently_added_collections}")
             # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项，未排序前：\n{recently_added_videos}")
 
-
         # 按照添加时间排序
         recently_added_collections.sort(key=lambda collection: collection.addedAt, reverse=True)
         recently_added_videos.sort(key=lambda video: video.addedAt, reverse=True)
         # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 个合集，排序后：\n{recently_added_collections}")
         # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项，排序后：\n{recently_added_videos}")
-
+        
         # 整理最近添加的合集
         for videoNum, collection in enumerate(recently_added_collections):
             if videoNum > sortout_num - 1:
                 break
             if self.config.get('Collection') and collection:
                 _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
-                self.process_sorttitle(collection)
+                # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
+                if collection.titleSort != collection.title:
+                    _LOGGER.info(f"「{collection.title}」合集的标题排序已锁定或手动调整过，不进行翻译替换\n")
+                else:
+                    self.process_sorttitle(collection)
         # 整理最近添加的媒体
         for videoNum, video in enumerate(recently_added_videos):
             if videoNum > sortout_num - 1:
@@ -443,9 +450,11 @@ class plexsortout:
                     print(video.title)
                     editvideo=video
 
+                # Fanart 精美封面筛选
                 if self.config.get('Poster'):
                     self.process_fanart(editvideo)
                     _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
+
                 # 标签翻译整理
                 if self.config.get('Genres'):
                     self.process_tag(editvideo)
