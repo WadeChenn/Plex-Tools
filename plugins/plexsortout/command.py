@@ -20,10 +20,12 @@ def get_enum_data():
 
 @plugin.command(name='select_data', title='Plex整理全库', desc='自动翻译标签&&拼音排序&&添加TOP250标签', icon='HourglassFull',run_in_background=True)
 def select_data(ctx: PluginCommandContext,
-                library: ArgSchema(ArgType.Enum, '媒体库', '选择一个媒体库', enum_values=get_enum_data,
-                                   multi_value=True)):
+                library: ArgSchema(ArgType.Enum, '选择需要整理的媒体库', '', enum_values=get_enum_data,multi_value=True),
+                sortoutNum: ArgSchema(ArgType.String, '整理数量（必填），示例：50，表示只整理最新的50条，整理全部输入: ALL', '')):
+                # sortoutNum: ArgSchema(ArgType.String, '整理数量，示例：50，表示只整理最新的50条，整理全部输入: ALL', '', default_value='ALL')):
+
     # plexst.config['library']=library
-    plexst.process_all(library)
+    plexst.process_all(library,sortoutNum)
     user_list = list(filter(lambda x: x.role == 1, mbot_api.user.list()))
     if user_list:
         for user in user_list:
