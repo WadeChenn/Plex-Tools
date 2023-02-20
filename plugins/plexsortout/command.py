@@ -21,8 +21,7 @@ def get_enum_data():
 @plugin.command(name='select_data', title='Plex整理全库', desc='自动翻译标签&&拼音排序&&添加TOP250标签', icon='HourglassFull',run_in_background=True)
 def select_data(ctx: PluginCommandContext,
                 library: ArgSchema(ArgType.Enum, '选择需要整理的媒体库', '', enum_values=get_enum_data,multi_value=True),
-                sortoutNum: ArgSchema(ArgType.String, '整理数量（必填），示例：50，表示只整理最新的50条，整理全部输入: ALL', '')):
-                # sortoutNum: ArgSchema(ArgType.String, '整理数量，示例：50，表示只整理最新的50条，整理全部输入: ALL', '', default_value='ALL')):
+                sortoutNum: ArgSchema(ArgType.String, '整理数量，示例：50，表示只整理最新的50条，留空整理全部', '', default_value='ALL', required=False)):
 
     # plexst.config['library']=library
     plexst.process_all(library,sortoutNum)
