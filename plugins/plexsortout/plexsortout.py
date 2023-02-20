@@ -357,7 +357,7 @@ class plexsortout:
                         _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
                         # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
                         if collection.titleSort != collection.title:
-                            _LOGGER.info(f"「{collection.title}」合集的标题排序已锁定或手动调整过，不进行翻译替换\n")
+                            _LOGGER.info(f"「{collection.title}」合集的标题排序为: ['{collection.titleSort}'], 已锁定或手动调整过，不进行翻译替换\n")
                         else:
                             self.process_sorttitle(collection)
                 #处理视频
