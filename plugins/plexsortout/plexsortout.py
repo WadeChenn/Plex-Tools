@@ -387,25 +387,47 @@ class plexsortout:
         sortout_num = 6
         # 指定要获取最近添加项的库
         if self.config.get('LIBRARY') == 'ALL' or not self.config.get('LIBRARY'):
-            recently_added = self.plexserver.library.recentlyAdded()
+            recently_added_videos = self.plexserver.library.recentlyAdded()
             _LOGGER.info(f"{plugins_name}未指定库，将整理全库中的最近 {sortout_num} 项")
-            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added}")
+            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added_videos}")
         else:
             library_names=self.config.get('LIBRARY').split(',')
             _LOGGER.info(f"{plugins_name}指定库为：{library_names}")
-            _LOGGER.info(f"{plugins_name}开始整理指定库中最近添加的 {sortout_num} 个媒体")
+            _LOGGER.info(f"{plugins_name}开始整理指定库中最近添加的 {sortout_num} 个媒体和合集")
             # 获取所有指定库中最近添加的 sortout_num 项
-            recently_added = []
+            recently_added_videos = []
+            recently_added_collections = []
             for library_name in library_names:
                 library = self.plexserver.library.section(library_name)
-                library_recently_added = library.recentlyAdded()[:sortout_num]
-                if len(library_recently_added) > 0:
-                    recently_added.extend(library_recently_added)
-            # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项：{recently_added}")
+                collections = library.collections()
+                # _LOGGER.error(f"{library_name}中的库0：{collections}")
+                # 库中最近添加媒体
+                library_recently_added_videos = library.recentlyAdded()[:sortout_num]
+                if len(library_recently_added_videos) > 0:
+                    recently_added_videos.extend(library_recently_added_videos)
+                # 库中最近添加合集
+                library_recently_added_collections = collections[:sortout_num]
+                if len(library_recently_added_collections) > 0:
+                    recently_added_collections.extend(library_recently_added_collections)
+            # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 个合集，未排序前：\n{recently_added_collections}")
+            # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项，未排序前：\n{recently_added_videos}")
 
-        
 
-        for videoNum, video in enumerate(recently_added):
+        # 按照添加时间排序
+        recently_added_collections.sort(key=lambda collection: collection.addedAt, reverse=True)
+        recently_added_videos.sort(key=lambda video: video.addedAt, reverse=True)
+        # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 个合集，排序后：\n{recently_added_collections}")
+        # _LOGGER.error(f"{plugins_name}所有指定库最近 {sortout_num} 项，排序后：\n{recently_added_videos}")
+
+        # 整理最近添加的合集
+        for videoNum, collection in enumerate(recently_added_collections):
+            if videoNum > sortout_num - 1:
+                break
+            if self.config.get('Collection') and collection:
+                _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
+                self.process_sorttitle(collection)
+        # 整理最近添加的媒体
+        for videoNum, video in enumerate(recently_added_videos):
             if videoNum > sortout_num - 1:
                 break
             if video:
