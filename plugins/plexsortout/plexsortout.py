@@ -127,7 +127,6 @@ tags = {
     "DouBanTop250": "",
 }
 
-
 class plexsortout:
     def setdata(self,plex,mrserver,servertype):
         self.plexserver = plex
@@ -135,6 +134,14 @@ class plexsortout:
         self.servertype = servertype
     def setconfig(self,config):
         self.config = config
+        self.config_Collection = self.config.get('Collection')
+        self.config_Poster = self.config.get('Poster')
+        self.config_Genres = self.config.get('Genres')
+        self.config_SortTitle = self.config.get('SortTitle')
+        self.config_Top250 = self.config.get('Top250')
+        self.config_SelfGenres = self.config.get('SelfGenres')
+        self.config_LIBRARY = self.config.get('LIBRARY')
+
     def uniqify(self, seq):
         keys = {}
         for e in seq:
@@ -255,12 +262,12 @@ class plexsortout:
                 video.addGenre(chlist, locked=True)
 
     def process_tag(self,video):
-        selftag=self.config.get('SelfGenres').split(',')
+        selftag=self.config_SelfGenres.split(',')
         for tag in selftag:
             tags[tag.split(':')[0]]=tag.split(':')[1]
 
         title = video.title
-        if self.config.get('Top250'):
+        if self.config_Top250:
             self.add_top250(video)
 
         if video.genres:
@@ -273,7 +280,7 @@ class plexsortout:
     def singleVideo(self, video):
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
-        if self.config.get('Top250'):
+        if self.config_Top250:
             self.add_top250(video)
         if video.genres:
             video.reload()
@@ -356,7 +363,7 @@ class plexsortout:
             videos.sort(key=lambda video: video.addedAt, reverse=True)
             # _LOGGER.error(f"{plugins_name}排序后：\n{videos}")
             #处理collection
-            if self.config.get('Collection'):
+            if self.config_Collection:
                 collections=videos_lib.collections()
                 for collection in collections:
                     _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
@@ -380,11 +387,11 @@ class plexsortout:
             for video,i in zip(videos,range(video_num)):
                 _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
                 #fanart筛选
-                if self.config.get('Poster'):
+                if self.config_Poster:
                     self.process_fanart(video)
                     _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
                 #标签翻译整理
-                if self.config.get('Genres'):
+                if self.config_Genres:
                     self.process_tag(video)
                     if video.genres:
                         genre_names = [genre.tag.lower() for genre in video.genres]
@@ -394,23 +401,23 @@ class plexsortout:
                     else:
                         _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
                 #首字母排序
-                if self.config.get('SortTitle'):
+                if self.config_SortTitle:
                     self.process_sorttitle(video)
 
         _LOGGER.info(f"{plugins_name}手动运行整理完成!")
         # else:
         #     _LOGGER.error(f'{plugins_name}仅支持配置了 PLEX 媒体库的用户使用')
 
-    # 整理指定库最近新添加项
+    # 自动整理指定库最近新添加项
     def process(self):
         sortout_num = 6
         # 指定要获取最近添加项的库
-        if self.config.get('LIBRARY') == 'ALL' or not self.config.get('LIBRARY'):
+        if self.config_LIBRARY == 'ALL' or not self.config_LIBRARY:
             recently_added_videos = self.plexserver.library.recentlyAdded()
             _LOGGER.info(f"{plugins_name}未指定库，将整理全库中的最近 {sortout_num} 项")
             # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added_videos}")
         else:
-            library_names=self.config.get('LIBRARY').split(',')
+            library_names=self.config_LIBRARY.split(',')
             _LOGGER.info(f"{plugins_name}指定库为：{library_names}")
             _LOGGER.info(f"{plugins_name}开始整理指定库中最近添加的 {sortout_num} 个媒体和合集")
             # 获取所有指定库中最近添加的 sortout_num 项
@@ -441,7 +448,7 @@ class plexsortout:
         for videoNum, collection in enumerate(recently_added_collections):
             if videoNum > sortout_num - 1:
                 break
-            if self.config.get('Collection') and collection:
+            if self.config_Collection and collection:
                 _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
                 # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
                 if collection.titleSort != collection.title:
@@ -466,12 +473,12 @@ class plexsortout:
                     editvideo=video
 
                 # Fanart 精美封面筛选
-                if self.config.get('Poster'):
+                if self.config_Poster:
                     self.process_fanart(editvideo)
                     _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
 
                 # 标签翻译整理
-                if self.config.get('Genres'):
+                if self.config_Genres:
                     self.process_tag(editvideo)
                     if editvideo.genres:
                         genre_names = [genre.tag.lower() for genre in editvideo.genres]
@@ -480,7 +487,7 @@ class plexsortout:
                     else:
                         _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
                 # 首字母排序
-                if self.config.get('SortTitle'):
+                if self.config_SortTitle:
                     self.process_sorttitle(editvideo)
             else:
                 print(f"{videoNum+1}. (no item found)")
