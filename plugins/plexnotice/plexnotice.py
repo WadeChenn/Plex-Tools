@@ -296,10 +296,14 @@ class WatchStateUpdater:
                 # self.processmsg(payload,'start',self.players[session_id])
 
                 if state=='paused':
-                    temp = ''
+                    # temp = {}
                     self.mrserver.event.publish_event('PlexPlayerEvent', {
                         'player': 'paused'
                     })
+                    temp = {
+                        'title': '',
+                        'body': ''
+                    }
                     self.processmsg(payload, 'paused', self.players[session_id], temp)
                     
                 should_fire = True
