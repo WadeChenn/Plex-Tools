@@ -30,7 +30,7 @@
     {
       "fieldName": "SelfGenres",
       "fieldType": "String",
-      "label": "自定义标签映射，例：'Action' 标签没有翻译，则设置 Action:动作 后可正常翻译替换",
+      "label": "例：若'Action'标签没有翻译，则设置 Action:动作 后可正常翻译替换,多个用英文逗号分割",
       "helperText": "",
       "defaultValue": "SelfGenres:SelfGenres"
     },
