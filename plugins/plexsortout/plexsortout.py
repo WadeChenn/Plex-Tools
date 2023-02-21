@@ -191,6 +191,12 @@ class plexsortout:
         else:
             video.addGenre(chlist, locked=True)
 
+        if chlist:
+            _LOGGER.info(f"「{video.title}」标签翻译整理完成 {chlist}")
+        else:
+            _LOGGER.info(f"「{video.title}」的标签都是中文，不需要翻译")
+        
+
     #获取 PLEX 服务器所有媒体库
     def get_library(self):
         libtable = []
@@ -218,7 +224,10 @@ class plexsortout:
                 if poster.provider == 'fanarttv':
                     video.setPoster(poster)
                     break
-            # _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
+            _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
+        else:
+            _LOGGER.info(f'「{video.title}」在 Fanart 中没有海报')
+        
 
     # 排序修改为首字母
     def process_sorttitle(self,video):
@@ -231,59 +240,66 @@ class plexsortout:
                 SortTitle = self.removePunctuation(SortTitle)
                 try:
                     video.editSortTitle(SortTitle)
-                    _LOGGER.info(f'「{title}」排序已修改为首字母「 {SortTitle} 」\n')
+                    _LOGGER.info(f"「{title}」排序已修改为首字母 ['{SortTitle}']\n")
                 except Exception as e:
                     _LOGGER.error(f"「{title}」Edit SortTitle error,原因：{e}")
 
     def add_top250(self,video):
         title = video.title
         for name in IMDBTop250:
-            hastag = 0
+            hastag = False
             if name == title:
                 for tag in video.genres:
                     if tag.tag == "IMDB TOP 250":
-                        hastag = 1
+                        hastag = True
                 if hastag:
+                    _LOGGER.info(f"「{title}」已有 ['IMDB TOP 250'] 标签，不用再添加")
                     break
                 chlist = []
                 chlist.append("IMDB TOP 250")
                 video.addGenre(chlist, locked=True)
+                _LOGGER.info(f"「{title}」已添加 ['IMDB TOP 250'] 标签")
 
         for name in DouBanTop250:
-            hastag = 0
+            hastag = False
             if name == title:
                 for tag in video.genres:
                     if tag.tag == "豆瓣TOP 250":
-                        hastag = 1
+                        hastag = True
                 if hastag:
+                    _LOGGER.info(f"「{title}」已有 ['豆瓣TOP 250'] 标签，不用再添加")
                     break
                 chlist = []
                 chlist.append("豆瓣TOP 250")
                 video.addGenre(chlist, locked=True)
+                _LOGGER.info(f"「{title}」已添加 ['豆瓣TOP 250'] 标签")
 
     def process_tag(self,video):
+        video.reload()
         selftag=self.config_SelfGenres.split(',')
         for tag in selftag:
             tags[tag.split(':')[0]]=tag.split(':')[1]
 
         title = video.title
+
         if self.config_Top250:
             self.add_top250(video)
 
         if video.genres:
-
             # if self.judgegenre(video.genres):
-            video.reload()
+            # video.reload()
             genres = video.genres
             self.updategenre(video, genres)
+        else:
+            _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
 
     def singleVideo(self, video):
+        video.reload()
         title = video.title
         # video.editTags(tag="actor", items=[x.tag for x in video.actors], remove=True)
         if self.config_Top250:
             self.add_top250(video)
         if video.genres:
-            video.reload()
             genres = video.genres
             self.updategenre(video, genres)
 
@@ -346,17 +362,15 @@ class plexsortout:
                     video.addGenre(chlist, locked=True)
 
             if video.genres:
-                video.reload()
+                # video.reload()
                 genres = video.genres
                 self.updategenre(video, genres)
     
     # 手动选择媒体库整理
     def process_all(self,library,sortoutNum):
-        # if 1:
-        
         libtable=library
         for i in range(len(libtable)):
-            _LOGGER.info(f'{plugins_name}现在开始处理媒体库「{libtable[i]}」')
+            _LOGGER.info(f"{plugins_name}现在开始处理媒体库 ['{libtable[i]}']")
             videos_lib = self.plexserver.library.section(libtable[i])
             videos = videos_lib.all()
             # _LOGGER.error(f"{plugins_name}未排序前：\n{videos}")
@@ -366,7 +380,7 @@ class plexsortout:
             if self.config_Collection:
                 collections=videos_lib.collections()
                 for collection in collections:
-                    _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
+                    _LOGGER.info(f"{plugins_name}开始处理合集 ['{collection.title}']")
                     # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
                     if collection.titleSort != collection.title:
                         _LOGGER.info(f"「{collection.title}」合集的标题排序为: ['{collection.titleSort}'], 已锁定或手动调整过，不进行翻译替换\n")
@@ -385,21 +399,13 @@ class plexsortout:
                 _LOGGER.info(f"「{libtable[i]}」库设置整理数量为['{sortoutNum}'], 将整理库中所有影片，共 {video_len} 部影片")
                 video_num = video_len
             for video,i in zip(videos,range(video_num)):
-                _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
+                _LOGGER.info(f"{plugins_name}开始处理 ['{video.title}']")
                 #fanart筛选
                 if self.config_Poster:
                     self.process_fanart(video)
-                    _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
                 #标签翻译整理
                 if self.config_Genres:
                     self.process_tag(video)
-                    if video.genres:
-                        genre_names = [genre.tag.lower() for genre in video.genres]
-                        genre_names = [name.split(':')[-1] for name in genre_names]
-                        # _LOGGER.info(f"「{video.title}」标签翻译整理完成 {video.genres}")
-                        _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
-                    else:
-                        _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
                 #首字母排序
                 if self.config_SortTitle:
                     self.process_sorttitle(video)
@@ -449,7 +455,7 @@ class plexsortout:
             if videoNum > sortout_num - 1:
                 break
             if self.config_Collection and collection:
-                _LOGGER.info(f'{plugins_name}开始处理合集「{collection.title}」')
+                _LOGGER.info(f"{plugins_name}开始处理合集 ['{collection.title}']")
                 # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
                 if collection.titleSort != collection.title:
                     _LOGGER.info(f"「{collection.title}」合集的标题排序已锁定或手动调整过，不进行翻译替换\n")
@@ -460,7 +466,7 @@ class plexsortout:
             if videoNum > sortout_num - 1:
                 break
             if video:
-                _LOGGER.info(f'{plugins_name}开始处理「{video.title}」')
+                _LOGGER.info(f"{plugins_name}开始处理 ['{video.title}']")
                 if video.type == "season":
                     parentkey = video.parentRatingKey
                     tvshows = self.plexserver.library.search(id=parentkey)
@@ -475,17 +481,9 @@ class plexsortout:
                 # Fanart 精美封面筛选
                 if self.config_Poster:
                     self.process_fanart(editvideo)
-                    _LOGGER.info(f'「{video.title}」Fanart 精美封面筛选完成')
-
                 # 标签翻译整理
                 if self.config_Genres:
                     self.process_tag(editvideo)
-                    if editvideo.genres:
-                        genre_names = [genre.tag.lower() for genre in editvideo.genres]
-                        genre_names = [name.split(':')[-1] for name in genre_names]
-                        _LOGGER.info(f"「{video.title}」标签翻译整理完成 {genre_names}")
-                    else:
-                        _LOGGER.info(f"「{video.title}」没有标签，不需要翻译")
                 # 首字母排序
                 if self.config_SortTitle:
                     self.process_sorttitle(editvideo)
