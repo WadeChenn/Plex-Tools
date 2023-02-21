@@ -3,7 +3,7 @@
   "title": "Plex工具箱",
   "author": "BeiMou(yewei)",
   "description": "下载完成后，自动进行整理。",
-  "version": "1.1",
+  "version": "1.3",
   "requirements": null,
   "configField": [
     {
@@ -30,7 +30,7 @@
     {
       "fieldName": "SelfGenres",
       "fieldType": "String",
-      "label": "自定义标签映射例,原标签1:新标签1,原标签2:新标签2",
+      "label": "自定义标签映射，例：'Action' 标签没有翻译，则设置 Action:动作 后可正常翻译替换",
       "helperText": "",
       "defaultValue": "SelfGenres:SelfGenres"
     },
