@@ -296,6 +296,9 @@ class TimelineHandler(object):
             'Activity': 'Added'
         })
         metadata = self.get_metadata_details(plex,rating_key)
+        if not metadata.get('source_title'):
+            return
+
         lbl = self.config.get('LibBlackList').split(',')
         library_ = metadata.get('library')
         if library_ in lbl:
@@ -344,6 +347,8 @@ class TimelineHandler(object):
                 for child_key in kwargs.get('child_keys', []):
 
                     child=self.get_metadata_details(plex,child_key)
+                    if not child.get('source_title'):
+                        return
                     if indexmin==0:
                         indexmin=child.get('index')
                     indexmin= min(child.get('index'),indexmin)
@@ -462,6 +467,8 @@ class TimelineHandler(object):
         tmdb_id=0
         media_type = MediaType.Movie
         section=video
+        if len(video) == 0:
+            return metadata
         if video[0].type=='season':
             metadata['source_title']=video[0].parentTitle
 
