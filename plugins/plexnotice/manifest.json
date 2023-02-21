@@ -128,17 +128,17 @@
       "defaultValue": "300"
     },
     {
-      "fieldName": "AddTitle",
+      "fieldName": "StorageTitle",
       "fieldType": "String",
-      "label": "AddTitle",
+      "label": "StorageTitle",
       "helperText": "Plex入库通知(标题)",
       "defaultValue":"入库:{title}"
 
     },
     {
-      "fieldName": "Add",
+      "fieldName": "Storage",
       "fieldType": "String",
-      "label": "Add",
+      "label": "Storage",
       "helperText": "Plex入库通知",
       "defaultValue":"{library_name} \n入库时间: {datestamp} 周{current_weekday} {timestamp}\n{subtitle}\n{summary}"
 

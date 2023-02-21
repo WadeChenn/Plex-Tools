@@ -378,8 +378,8 @@ class TimelineHandler(object):
                 # 模板赋值
 
                 temp = {
-                    'title': self.config.get('AddTitle'),
-                    'body': self.config.get('Add')
+                    'title': self.config.get('StorageTitle'),
+                    'body': self.config.get('Storage')
                 }
                 wxtitle = temp.get('title')
                 wxbody = temp.get('body')
