@@ -122,9 +122,6 @@ tags = {
     "Talk Show": "脱口秀",
     "Film-Noir": "黑色",
     "Indie": "独立",
-    "IMDBtop250": "",
-    "IMDBTop250": "",
-    "DouBanTop250": "",
 }
 
 class plexsortout:
@@ -376,7 +373,7 @@ class plexsortout:
             # _LOGGER.error(f"{plugins_name}未排序前：\n{videos}")
             videos.sort(key=lambda video: video.addedAt, reverse=True)
             # _LOGGER.error(f"{plugins_name}排序后：\n{videos}")
-            #处理collection
+            #处理合集
             if self.config_Collection:
                 collections=videos_lib.collections()
                 for collection in collections:
@@ -417,18 +414,22 @@ class plexsortout:
     # 自动整理指定库最近新添加项
     def process(self):
         sortout_num = 6
+        recently_added_videos = []
+        recently_added_collections = []
         # 指定要获取最近添加项的库
         if self.config_LIBRARY == 'ALL' or not self.config_LIBRARY:
             recently_added_videos = self.plexserver.library.recentlyAdded()
-            _LOGGER.info(f"{plugins_name}未指定库，将整理全库中的最近 {sortout_num} 项")
-            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added_videos}")
+            for library in self.plexserver.library.sections():
+                for collection in library.collections():
+                    recently_added_collections.append(collection)
+            _LOGGER.info(f"{plugins_name}未指定库或设置为ALL，将整理全库中的最近 {sortout_num} 项")
+            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added_videos[:sortout_num]}")
+            # _LOGGER.error(f"{plugins_name}所有库最近 {sortout_num} 项：{recently_added_collections[:sortout_num]}")
         else:
             library_names=self.config_LIBRARY.split(',')
             _LOGGER.info(f"{plugins_name}指定库为：{library_names}")
             _LOGGER.info(f"{plugins_name}开始整理指定库中最近添加的 {sortout_num} 个媒体和合集")
             # 获取所有指定库中最近添加的 sortout_num 项
-            recently_added_videos = []
-            recently_added_collections = []
             for library_name in library_names:
                 library = self.plexserver.library.section(library_name)
                 collections = library.collections()
@@ -458,7 +459,7 @@ class plexsortout:
                 _LOGGER.info(f"{plugins_name}开始处理合集 ['{collection.title}']")
                 # 判断标题排序和标题是否相同,如果是不相同则视为手动修改过，不处理。
                 if collection.titleSort != collection.title:
-                    _LOGGER.info(f"「{collection.title}」合集的标题排序已锁定或手动调整过，不进行翻译替换\n")
+                    _LOGGER.info(f"「{collection.title}」合集的标题排序为: ['{collection.titleSort}'], 已锁定或手动调整过，不进行翻译替换\n")
                 else:
                     self.process_sorttitle(collection)
         # 整理最近添加的媒体
