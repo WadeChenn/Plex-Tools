@@ -311,7 +311,7 @@ class TimelineHandler(object):
             # now = datetime.datetime.now()
             #获取当前时间秒数
             now = time.time()
-            if int(metadata['added_at']) < now - 86400:  # Updated more than 24 hours ago
+            if int(time.mktime(metadata['added_at'].timetuple())) < now - 86400:  # Updated more than 24 hours ago
                 _LOGGER.info("MR TimelineHandler :: Library item %s added more than 24 hours ago. Not notifying."
                              % str(rating_key))
                 notify = False
