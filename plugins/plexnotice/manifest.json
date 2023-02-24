@@ -3,7 +3,7 @@
   "title": "Plex动态推送",
   "author": "BeiMou(yewei)",
   "description": "Plex播放动态推送,入库推送",
-  "version": "1.0",
+  "version": "2.3",
   "requirements": [],
   "configField": [
     {
