@@ -258,8 +258,8 @@ class WatchStateUpdater:
             #     return
             # Sessions "end" when stopped
             temp = {
-                'title': self.config.get('PlayTitle'),
-                'body': self.config.get('Play')
+                'title': self.config.get('StopTitle'),
+                'body': self.config.get('Stop')
             }
             player = self.players[session_id]
             stopnow = datetime.datetime.now()
