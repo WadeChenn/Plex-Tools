@@ -208,7 +208,7 @@ class TimelineHandler(object):
                     run_date=datetime.datetime.now(pytz.UTC) + datetime.timedelta(**kwargs),
                     timezone=pytz.UTC),
                 misfire_grace_time=None)
-            self.ACTIVITY_SCHED.start()
+            # self.ACTIVITY_SCHED.start()
             _LOGGER.info('生成新任务成功 當前任務列表：{}'.format(self.ACTIVITY_SCHED.get_jobs()))
 
 
@@ -292,9 +292,7 @@ class TimelineHandler(object):
     def on_created(self,rating_key,plex, **kwargs):
         # pms_connect = pmsconnect.PmsConnect()
         # plex=plex
-        self.mrserver.event.publish_event('PlexActivityEvent', {
-            'Activity': 'Added'
-        })
+
         metadata = self.get_metadata_details(plex,rating_key)
         if not metadata.get('source_title'):
             return
@@ -310,12 +308,13 @@ class TimelineHandler(object):
 
         if metadata:
             notify = True
-            # now = helpers.timestamp()
-            #
-            # if int(metadata['added_at']) < now - 86400:  # Updated more than 24 hours ago
-            #     _LOGGER.info("MR TimelineHandler :: Library item %s added more than 24 hours ago. Not notifying."
-            #                  % str(rating_key))
-            #     notify = False
+            now = datetime.datetime.now()
+            #切换为秒
+            now = int(time.mktime(now.timetuple()))
+            if int(metadata['added_at']) < now - 86400:  # Updated more than 24 hours ago
+                _LOGGER.info("MR TimelineHandler :: Library item %s added more than 24 hours ago. Not notifying."
+                             % str(rating_key))
+                notify = False
 
             # data_factory = datafactory.DataFactory()
             # if 'child_keys' not in kwargs:
@@ -338,6 +337,7 @@ class TimelineHandler(object):
             # metadata['datestamp'] = datestamp
             subtitle=''
             if notify:
+
                 data = {'timeline_data': metadata, 'notify_action': 'on_created'}
                 data.update(kwargs)
                 print(data)
@@ -416,6 +416,10 @@ class TimelineHandler(object):
                             notify_video = True
                 # Episodes=plex.library.recentlyAddedEpisodes(maxresults=50)
                 if notify_video:
+                    self.mrserver.event.publish_event('PlexActivityEvent', {
+                        'Activity': 'Added'
+                    })
+
                     if uid_table: # 判断uid是否为空
                         for channel in channel_table:
                             for uid in self.config.get('uid'):
@@ -438,14 +442,14 @@ class TimelineHandler(object):
                             },to_channel_name=channel)
                 # plexpy.NOTIFY_QUEUE.put(data)
 
-            all_keys = [rating_key]
-            if 'child_keys' in kwargs:
-                all_keys.extend(kwargs['child_keys'])
+                all_keys = [rating_key]
+                if 'child_keys' in kwargs:
+                    all_keys.extend(kwargs['child_keys'])
 
-            # for key in all_keys:
-            #     data_factory.set_recently_added_item(key)
+                # for key in all_keys:
+                #     data_factory.set_recently_added_item(key)
 
-            _LOGGER.debug("Added %s items to the recently_added database table." % str(len(all_keys)))
+                _LOGGER.debug("Added %s items to the recently_added database table." % str(len(all_keys)))
 
         else:
             _LOGGER.error("MR TimelineHandler :: Unable to retrieve metadata for rating_key %s" % str(rating_key))

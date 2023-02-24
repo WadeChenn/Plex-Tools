@@ -27,6 +27,7 @@ from apscheduler.triggers.date import DateTrigger
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 ACTIVITY_SCHED = BackgroundScheduler(timezone=pytz.UTC)
+ACTIVITY_SCHED.start()
 ########################依赖库初始化###########################
 # 依赖库列表
 import_list = [
